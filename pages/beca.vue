@@ -67,6 +67,7 @@ const abrirFormulario = (beca = null) => {
 
 const agregarBeca = (nuevaBeca) => {
   becas.value.push(nuevaBeca);
+  localStorage.removeItem('becaData');
 };
 
 const actualizarBeca = (becaActualizada) => {

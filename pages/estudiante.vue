@@ -56,9 +56,14 @@
       </table>
     </div>
 
-    <Modal :visible="showModal" @close="showModal = false">
-      <EstudianteFormulario :initialData="estudianteSeleccionado" :isEditing="isEditing" @estudianteCreado="fetchEstudiantes"
-        @estudianteActualizado="fetchEstudiantes" @cerrarFormulario="showModal = false" />
+    <Modal :visible="showModal" @close="cerrarFormulario">
+      <EstudianteFormulario 
+        :initialData="estudianteSeleccionado" 
+        :isEditing="isEditing" 
+        @estudianteCreado="handleEstudianteCreado"
+        @estudianteActualizado="fetchEstudiantes" 
+        @cerrarFormulario="cerrarFormulario" 
+      />
     </Modal>
   </div>
 </template>
@@ -108,6 +113,16 @@ const deleteEstudiante = async (id) => {
     console.error('Error al eliminar el estudiante:', error);
     alert('Hubo un problema al eliminar el estudiante');
   }
+};
+
+const cerrarFormulario = () => {
+  showModal.value = false;
+  localStorage.removeItem('datosFormularioEstudiante');
+};
+
+const handleEstudianteCreado = () => {
+  fetchEstudiantes();
+  cerrarFormulario();
 };
 
 onMounted(async () => {

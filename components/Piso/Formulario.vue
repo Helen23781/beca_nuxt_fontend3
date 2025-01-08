@@ -31,6 +31,10 @@
       </select>
     </div>
     <div class="flex justify-end space-x-2">
+      <button type="button" @click="cancelarFormulario"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Cancelar
+      </button>
       <button type="submit"
         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         {{ isEditing ? 'Actualizar Piso' : 'Crear Piso' }}
@@ -141,21 +145,23 @@ const enviarFormulario = async () => {
       alert(props.isEditing ? 'Piso actualizado exitosamente' : 'Piso creado exitosamente');
     }, 100);
 
+    // Guardar datos en localStorage al crear un nuevo piso
+    if (!props.isEditing) {
+      localStorage.setItem('pisoData', JSON.stringify(formData));
+    }
+    localStorage.removeItem('pisoData'); // Limpiar localStorage después de la creación
+
   } catch (error) {
     console.error('Error:', error);
     alert(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
   }
 };
 
-
-
-
-
-
-//AQUIIII
-
-
-
+// Función para cancelar el formulario
+const cancelarFormulario = () => {
+  localStorage.removeItem('pisoData');
+  emit('cerrarFormulario');
+};
 
 // Modificar el watch para mostrar la beca actual al editar
 watch(() => props.initialData, (newData) => {
@@ -179,6 +185,25 @@ onMounted(async () => {
   await cargarBecas();
   if (props.initialData) {
     console.log('Datos iniciales:', props.initialData);
+  }
+
+  // Cargar datos desde localStorage al montar
+  const savedData = JSON.parse(localStorage.getItem('pisoData'));
+  if (savedData) {
+    numeroPiso.value = savedData.numero_piso || '';
+    jefePiso.value = savedData.jefe_piso || '';
+    becaId.value = savedData.becaId || '';
+  }
+});
+
+// Guardar en localStorage cada vez que los campos cambien
+watch([numeroPiso, jefePiso, becaId], () => {
+  if (!props.isEditing) {
+    localStorage.setItem('pisoData', JSON.stringify({
+      numero_piso: numeroPiso.value,
+      jefe_piso: jefePiso.value,
+      becaId: becaId.value
+    }));
   }
 });
 </script>

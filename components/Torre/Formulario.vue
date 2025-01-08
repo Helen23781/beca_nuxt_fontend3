@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 
 const props = defineProps({
   initialData: Object,
@@ -113,6 +113,34 @@ const validarYEnviar = () => {
   }
 };
 
+// Guardar en localStorage cada vez que los campos cambien
+watch([nombreTorre, jefeTorre, becaId, pisoId], () => {
+  if (!props.isEditing) {
+    localStorage.setItem('torreData', JSON.stringify({
+      nombre_torre: nombreTorre.value,
+      jefe_torre: jefeTorre.value,
+      becaId: becaId.value,
+      pisoId: pisoId.value
+    }));
+  }
+});
+
+// Cargar datos de localStorage solo si no está editando
+if (!props.isEditing) {
+  const storedData = JSON.parse(localStorage.getItem('torreData'));
+  if (storedData) {
+    nombreTorre.value = storedData.nombre_torre || '';
+    jefeTorre.value = storedData.jefe_torre || '';
+    becaId.value = storedData.becaId || '';
+    pisoId.value = storedData.pisoId || '';
+  }
+}
+
+const cancelarFormulario = () => {
+  localStorage.removeItem('torreData');
+  emit('cerrarFormulario');
+};
+
 const enviarFormulario = async () => {
   const url = props.isEditing
     ? `${config.public.backend_url}/torres/update/${props.initialData.id}`
@@ -135,14 +163,13 @@ const enviarFormulario = async () => {
       body: JSON.stringify(formData)
     });
 
-  
-
     const data = await response;
 
     if (props.isEditing) {
       emit('torreActualizada', data);
     } else {
       emit('torreCreada', data);
+      localStorage.removeItem('torreData'); // Limpiar localStorage después de la creación
     }
 
     emit('cerrarFormulario');

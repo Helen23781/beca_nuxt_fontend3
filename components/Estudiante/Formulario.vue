@@ -81,6 +81,10 @@
             </div>
         </div>
         <div class="flex justify-end space-x-2 mt-4">
+            <button type="button" @click="$emit('cerrarFormulario')"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancelar
+            </button>
             <button type="submit"
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 {{ isEditing ? 'Actualizar Estudiante' : 'Crear Estudiante' }}
@@ -251,6 +255,7 @@ const enviarFormulario = async () => {
             emit('estudianteActualizado', data);
         } else {
             emit('estudianteCreado', data);
+            localStorage.removeItem('datosFormularioEstudiante');
         }
 
         emit('cerrarFormulario');
@@ -265,18 +270,63 @@ const enviarFormulario = async () => {
     }
 };
 
+// Función para guardar datos en localStorage
+const guardarEnLocalStorage = () => {
+    const datosFormulario = {
+        nombreEstudiante: nombreEstudiante.value,
+        apellidoEstudiante: apellidoEstudiante.value,
+        anioAcademico: anioAcademico.value,
+        edad: edad.value,
+        carrera: carrera.value,
+        facultad: facultad.value,
+        becaId: becaId.value,
+        pisoId: pisoId.value,
+        torreId: torreId.value,
+        cuartoId: cuartoId.value,
+        foto: foto.value
+    };
+    localStorage.setItem('datosFormularioEstudiante', JSON.stringify(datosFormulario));
+};
+
+// Función para cargar datos desde localStorage
+const cargarDesdeLocalStorage = () => {
+    const datosGuardados = localStorage.getItem('datosFormularioEstudiante');
+    if (datosGuardados) {
+        const datos = JSON.parse(datosGuardados);
+        nombreEstudiante.value = datos.nombreEstudiante || '';
+        apellidoEstudiante.value = datos.apellidoEstudiante || '';
+        anioAcademico.value = datos.anioAcademico || '';
+        edad.value = datos.edad || '';
+        carrera.value = datos.carrera || '';
+        facultad.value = datos.facultad || '';
+        becaId.value = datos.becaId || '';
+        pisoId.value = datos.pisoId || '';
+        torreId.value = datos.torreId || '';
+        cuartoId.value = datos.cuartoId || '';
+        foto.value = datos.foto || '';
+    }
+};
+
+// Observa cambios en los campos del formulario para guardar en localStorage solo si no está editando
+if (!props.isEditing) {
+    watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreId, cuartoId, foto], guardarEnLocalStorage);
+}
+
+// Cargar datos desde localStorage al montar el componente solo si no está editando
 onMounted(async () => {
+    if (!props.isEditing) {
+        cargarDesdeLocalStorage();
+    }
     await cargarBecas();
     await cargarPisos();
     await cargarTorres();
     await cargarCuartos();
-    if(props.isEditing){
-        console.log(props.initialData)
-        becaId.value = props.initialData.cuarto.torre.piso.beca.id
-        pisoId.value = props.initialData.cuarto.torre.piso.id
-        torreId.value = props.initialData.cuarto.torre.id
-        cuartoId.value = props.initialData.cuarto.id
-
+    if (props.isEditing) {
+        console.log(props.initialData);
+        becaId.value = props.initialData.cuarto.torre.piso.beca.id;
+        pisoId.value = props.initialData.cuarto.torre.piso.id;
+        torreId.value = props.initialData.cuarto.torre.id;
+        cuartoId.value = props.initialData.cuarto.id;
     }
 });
 </script> 

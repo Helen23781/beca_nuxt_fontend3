@@ -41,6 +41,10 @@
             </select>
         </div>
         <div class="flex justify-end space-x-2">
+            <button type="button" @click="cancelarFormulario"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Cancelar
+            </button>
             <button type="submit"
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 {{ isEditing ? 'Actualizar Cuarto' : 'Crear Cuarto' }}
@@ -50,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 
 const props = defineProps({
     initialData: Object,
@@ -69,55 +73,22 @@ const becas = ref([]);
 const pisos = ref([]);
 const torres = ref([]);
 
-
 // Validaciones
-const validarNumeroCuarto = (numero) => {
-    return /^[0-9]+(\.[0-9]+)?$/.test(numero);
-};
+const validarNumeroCuarto = (numero) => /^[0-9]+(\.[0-9]+)?$/.test(numero);
+const validarCapacidadMaxima = (capacidad) => /^[0-9]+$/.test(capacidad);
 
-const validarCapacidadMaxima = (capacidad) => {
-    return /^[0-9]+$/.test(capacidad);
-};
+// Computed para filtrar los pisos y torres
+const pisosFiltrados = computed(() => pisos.value.filter(piso => piso.becaId === becaId.value));
+const torresFiltradas = computed(() => torres.value.filter(torre => torre.pisoId === pisoId.value));
 
-// Computed para filtrar los pisos según la beca seleccionada
-const pisosFiltrados = computed(() => {
-    return pisos.value.filter(piso => piso.becaId === becaId.value);
-});
-
-const torresFiltradas = computed(() => {
-    return torres.value.filter(torre => torre.pisoId === pisoId.value);
-});
-
-// Función para cargar las becas
-const cargarBecas = async () => {
+// Funciones para cargar datos
+const cargarDatos = async (url, refData) => {
     try {
-        const response = await $fetch(`${config.public.backend_url}/becas`);
-        becas.value = response;
+        const response = await $fetch(url);
+        refData.value = response;
     } catch (error) {
-        console.error('Error al cargar las becas:', error);
-        alert('Error al cargar las becas');
-    }
-};
-
-// Función para cargar los pisos
-const cargarPisos = async () => {
-    try {
-        const response = await $fetch(`${config.public.backend_url}/pisos`);
-        pisos.value = response;
-    } catch (error) {
-        console.error('Error al cargar los pisos:', error);
-        alert('Error al cargar los pisos');
-    }
-};
-
-// Función para cargar las torres
-const cargarTorres = async () => {
-    try {
-        const response = await $fetch(`${config.public.backend_url}/torres`);
-        torres.value = response;
-    } catch (error) {
-        console.error('Error al cargar las torres:', error);
-        alert('Error al cargar las torres');
+        console.error(`Error al cargar datos de ${url}:`, error);
+        alert(`Error al cargar datos de ${url}`);
     }
 };
 
@@ -132,6 +103,48 @@ const validarYEnviar = () => {
         return;
     }
     enviarFormulario();
+};
+
+// Guardar en localStorage solo si no se está editando
+watch([numeroCuarto, capacidadMaxima, becaId, pisoId, torreid], ([newNumeroCuarto, newCapacidadMaxima, newBecaId, newPisoId, newTorreid]) => {
+    if (!props.isEditing) {
+        console.log("asdasd")
+        localStorage.setItem('cuartoData', JSON.stringify({
+            numero_cuarto: newNumeroCuarto,
+            capacidad_maxima: newCapacidadMaxima,
+            becaId: newBecaId,
+            pisoId: newPisoId,
+            torreid: newTorreid
+        }));
+    }
+});
+
+// Cargar datos de localStorage al montar el componente solo si no se está editando
+onMounted(() => {
+    console.log(props.isEditing);
+    if (!props.isEditing) {
+        const storedData = localStorage.getItem('cuartoData');
+        if (storedData) {
+            try {
+                const parsedData = JSON.parse(storedData);
+                console.log(parsedData);
+                numeroCuarto.value = parsedData.numero_cuarto || '';
+                capacidadMaxima.value = parsedData.capacidad_maxima || '';
+                becaId.value = parsedData.becaId || '';
+                pisoId.value = parsedData.pisoId || '';
+                torreid.value = parsedData.torreid || '';
+            } catch (error) {
+                console.error('Error al parsear los datos de localStorage:', error);
+            }
+        } else {
+            console.log('No hay datos almacenados en localStorage bajo la clave "cuartoData".');
+        }
+    }
+});
+
+const cancelarFormulario = () => {
+    localStorage.removeItem('cuartoData');
+    emit('cerrarFormulario');
 };
 
 const enviarFormulario = async () => {
@@ -163,6 +176,7 @@ const enviarFormulario = async () => {
             emit('cuartoActualizado', data);
         } else {
             emit('cuartoCreado', data);
+            localStorage.removeItem('cuartoData'); // Limpiar localStorage después de la creación
         }
 
         emit('cerrarFormulario');
@@ -177,21 +191,16 @@ const enviarFormulario = async () => {
     }
 };
 
-
 onMounted(async () => {
-    await cargarBecas();
-    await cargarPisos();
-    await cargarTorres();
+    await cargarDatos(`${config.public.backend_url}/becas`, becas);
+    await cargarDatos(`${config.public.backend_url}/pisos`, pisos);
+    await cargarDatos(`${config.public.backend_url}/torres`, torres);
 
-    if(props.isEditing){
-        console.log(props.initialData)
-        console.log(props.initialData.torre.piso.beca.id)
-        becaId.value = props.initialData.torre.piso.beca.id
-        pisoId.value = props.initialData.torre.piso.id
-        torreid.value = props.initialData.torre.id
-
+    if (props.isEditing) {
+        console.log(props.initialData);
+        becaId.value = props.initialData.torre.piso.beca.id;
+        pisoId.value = props.initialData.torre.piso.id;
+        torreid.value = props.initialData.torre.id;
     }
-    
-    
 });
 </script> 

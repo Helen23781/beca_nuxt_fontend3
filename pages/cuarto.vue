@@ -73,6 +73,7 @@ const abrirFormulario = (cuarto = null) => {
   cuartoSeleccionado.value = cuarto;
   isEditing.value = !!cuarto;
   showModal.value = true;
+  
 };
 
 

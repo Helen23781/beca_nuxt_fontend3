@@ -16,6 +16,10 @@
       <p v-if="jefeFormatoError" class="text-red-500 text-sm mt-1">No se admiten números ni símbolos</p>
     </div>
     <div class="flex justify-end space-x-2">
+      <button type="button" @click="cancelarFormulario"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Cancelar
+      </button>
       <button type="submit"
         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         {{ isEditing ? 'Actualizar Beca' : 'Crear Beca' }}
@@ -50,6 +54,30 @@ const validarSoloLetras = (texto) => {
   return /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto);
 };
 
+// Guardar en localStorage cada vez que los campos cambien
+watch([nombreBeca, jefeBeca], () => {
+  if (!props.isEditing) {
+    localStorage.setItem('becaData', JSON.stringify({
+      nombre_beca: nombreBeca.value,
+      jefe_beca: jefeBeca.value
+    }));
+  }
+});
+
+// Cargar datos de localStorage solo si no está editando
+if (!props.isEditing) {
+  const storedData = JSON.parse(localStorage.getItem('becaData'));
+  if (storedData) {
+    nombreBeca.value = storedData.nombre_beca || '';
+    jefeBeca.value = storedData.jefe_beca || '';
+  }
+}
+
+const cancelarFormulario = () => {
+  localStorage.removeItem('becaData');
+  emit('cerrarFormulario');
+};
+
 const enviarFormulario = async () => {
   const url = props.isEditing
     ? `${config.public.backend_url}/becas/update/${props.initialData.id}`
@@ -68,9 +96,15 @@ const enviarFormulario = async () => {
       })
     });
 
-   
+    const data = await response;
 
-    const data = await response
+    // Guardar en localStorage solo si no está editando
+    if (!props.isEditing) {
+      localStorage.setItem('becaData', JSON.stringify({
+        nombre_beca: nombreBeca.value,
+        jefe_beca: jefeBeca.value
+      }));
+    }
 
     // Primero emitimos los eventos de actualización
     if (props.isEditing) {
@@ -86,6 +120,11 @@ const enviarFormulario = async () => {
     setTimeout(() => {
       alert(props.isEditing ? 'Beca actualizada exitosamente' : 'Beca creada exitosamente');
     }, 100);
+
+    // Limpiar localStorage después de crear
+    if (!props.isEditing) {
+      localStorage.removeItem('becaData');
+    }
 
   } catch (error) {
     console.error('Error:', error);

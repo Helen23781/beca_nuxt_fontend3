@@ -113,6 +113,7 @@ const abrirFormulario = (piso = null) => {
 
 const agregarPiso = (nuevoPiso) => {
   pisos.value.push(nuevoPiso);
+  localStorage.removeItem('pisoData');
 };
 
 const actualizarPiso = async (pisoActualizado) => {

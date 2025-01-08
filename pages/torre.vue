@@ -75,6 +75,7 @@ const abrirFormulario = (torre = null) => {
 
 const agregarTorre = (nuevaTorre) => {
   torres.value.push(nuevaTorre);
+  localStorage.removeItem('torreData');
 };
 
 const actualizarTorre = (torreActualizada) => {
