@@ -25,14 +25,24 @@
                     class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
             </div>
             <div>
-                <label for="carrera" class="block text-gray-700 font-bold mb-1">Carrera:</label>
-                <input type="text" id="carrera" v-model="carrera" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                <label for="facultad" class="block text-gray-700 font-bold mb-1">Facultad:</label>
+                <select id="facultad" v-model="facultad" required
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Seleccione una facultad</option>
+                    <option value="Ciencias Tecnicas y Economicas">Ciencias Técnicas y Económicas</option>
+                    <option value="Ciencias Pedagogicas">Ciencias Pedagógicas</option>
+                    <option value="Humanidades">Humanidades</option>
+                    <option value="Cultura Fisica">Cultura Física</option>
+                    <option value="Ciencias Agropecuarias">Ciencias Agropecuarias</option>
+                </select>
             </div>
             <div>
-                <label for="facultad" class="block text-gray-700 font-bold mb-1">Facultad:</label>
-                <input type="text" id="facultad" v-model="facultad" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                <label for="carrera" class="block text-gray-700 font-bold mb-1">Carrera:</label>
+                <select id="carrera" v-model="carrera" required
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Seleccione una carrera</option>
+                    <option v-for="c in carrerasFiltradas" :key="c" :value="c">{{ c }}</option>
+                </select>
             </div>
             <div>
                 <label for="becaId" class="block text-gray-700 font-bold mb-1">Beca:</label>
@@ -121,6 +131,34 @@ const pisos = ref([]);
 const torres = ref([]);
 const cuartos = ref([]);
 
+// Opciones de carreras por facultad
+const opcionesCarreras = {
+    "Ciencias Pedagogicas": [
+        "Licenciatura en Psicopedagogia", "Licenciatura en Logopedia", "Licenciatura en Enseñanza especial", "Licenciatura en Educacion Primaria",
+        "Licenciatura en Historia", "Licenciatura en Geografia", "Licenciatura en Matematicas",
+        "Licenciatura en Quimica", "Licenciatura en Español", "Licenciatura en Lenguas Extranjeras", "Licenciatura en Biologia","Marxismo Leninismo","Licenciatura en Filosofia"
+    ],
+    "Ciencias Tecnicas y Economicas": [
+        "Ingieneria informatica", "Ingieneria Industrial", "Contabilidad y Finanzas",
+        "Licenciatura Informatica", "Licenciatura en electicidad"
+    ],
+    "Humanidades": [
+        "Licenciatura en Derecho", "Psicologia", "Licenciatura en Educacion Artistica"
+    ],
+    "Ciencias Agropecuarias": [
+        "Ingeniería Agrónoma", "Ingeniería Forestal"
+    ],
+    "Cultura Física": [
+        "Licenciatura en Cultura Física"
+    ],
+    // Agrega más facultades y sus carreras aquí si es necesario
+};
+
+// Computed para filtrar las carreras según la facultad seleccionada
+const carrerasFiltradas = computed(() => {
+    return opcionesCarreras[facultad.value] || [];
+});
+
 // Computed para filtrar los pisos según la beca seleccionada
 const pisosFiltrados = computed(() => {
     return pisos.value.filter(piso => piso.becaId === becaId.value);
@@ -193,8 +231,6 @@ const cargarCuartosPorTorre = async (torreId) => {
     }
 };
 
-
-
 // Observa cambios en torreId para cargar cuartos
 watch(torreId, (newTorreId) => {
     if (newTorreId) {
@@ -216,8 +252,29 @@ const handleFileChange = (event) => {
 
 // Función para validar y enviar el formulario
 const validarYEnviar = () => {
+    if (!validarNombreApellido(nombreEstudiante.value)) {
+        alert('El nombre debe contener solo letras y comenzar con mayúscula.');
+        return;
+    }
+    if (!validarNombreApellido(apellidoEstudiante.value)) {
+        alert('El apellido debe contener solo letras y comenzar con mayúscula.');
+        return;
+    }
+    if (!validarAnioAcademico(anioAcademico.value)) {
+        alert('El año académico debe ser un número entre 1 y 5.');
+        return;
+    }
+    if (!validarEdad(edad.value)) {
+        alert('La edad debe ser un número entero menor que 100.');
+        return;
+    }
     enviarFormulario();
 };
+
+// Validaciones
+const validarNombreApellido = (nombre) => /^[A-Z][a-zA-Z\s]*$/.test(nombre);
+const validarAnioAcademico = (anio) => /^[1-5]$/.test(anio);
+const validarEdad = (edad) => /^[1-9][0-9]?$/.test(edad);
 
 const enviarFormulario = async () => {
     const url = props.isEditing
@@ -329,4 +386,4 @@ onMounted(async () => {
         cuartoId.value = props.initialData.cuarto.id;
     }
 });
-</script> 
+</script>
