@@ -58,7 +58,7 @@ const emit = defineEmits(['torreCreada', 'torreActualizada', 'cerrarFormulario']
 const config = useRuntimeConfig();
 const nombreTorre = ref(props.initialData?.nombre_torre || '');
 const jefeTorre = ref(props.initialData?.jefe_torre || '');
-const becaId = ref(props.initialData?.becaId || '');
+const becaId = ref(props.initialData?.piso?.becaId || '');
 const pisoId = ref(props.initialData?.pisoId || '');
 const becas = ref([]);
 const pisos = ref([]);
@@ -135,12 +135,9 @@ const enviarFormulario = async () => {
       body: JSON.stringify(formData)
     });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(errorData || 'Error en la operación');
-    }
+  
 
-    const data = await response.json();
+    const data = await response;
 
     if (props.isEditing) {
       emit('torreActualizada', data);

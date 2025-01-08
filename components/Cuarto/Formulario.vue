@@ -182,8 +182,16 @@ onMounted(async () => {
     await cargarBecas();
     await cargarPisos();
     await cargarTorres();
-    if (props.initialData) {
-        console.log('Datos iniciales:', props.initialData);
+
+    if(props.isEditing){
+        console.log(props.initialData)
+        console.log(props.initialData.torre.piso.beca.id)
+        becaId.value = props.initialData.torre.piso.beca.id
+        pisoId.value = props.initialData.torre.piso.id
+        torreid.value = props.initialData.torre.id
+
     }
+    
+    
 });
 </script> 

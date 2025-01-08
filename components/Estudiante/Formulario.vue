@@ -1,5 +1,8 @@
 <template>
     <form @submit.prevent="validarYEnviar" class="max-w-lg mx-auto bg-white p-4 rounded-lg shadow-md max-h-screengap-4">
+        <div class="flex justify-center mb-4">
+            <NuxtImg v-if="foto" :src="fotoUrl" alt="Vista previa de la foto" class="rounded-full h-12 w-12 object-cover"/>
+        </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="nombreEstudiante" class="block text-gray-700 font-bold mb-1">Nombre:</label>
@@ -75,7 +78,6 @@
                 <label for="foto" class="block text-gray-700 font-bold mb-1">Foto:</label>
                 <input type="file" id="foto" @change="handleFileChange"
                     class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-                <img v-if="foto" :src="foto" alt="Vista previa de la foto" class="mt-2 max-w-xs rounded-lg shadow-md">
             </div>
         </div>
         <div class="flex justify-end space-x-2 mt-4">
@@ -89,6 +91,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import { useRuntimeConfig } from '#app';
 
 const props = defineProps({
     initialData: Object,
@@ -123,13 +126,17 @@ const torresFiltradas = computed(() => {
     return torres.value.filter(torre => torre.pisoId === pisoId.value);
 });
 
-
+// Computed para obtener la URL de la foto desde el backend
+const fotoUrl = computed(() => {
+    return foto.value && !foto.value.startsWith('data:') ? `${config.public.backend_url}/estudiantes/foto/${foto.value}` : foto.value;
+});
 
 // Función para cargar las becas
 const cargarBecas = async () => {
     try {
         const response = await $fetch(`${config.public.backend_url}/becas`);
         becas.value = response;
+        console.log(response)
     } catch (error) {
         console.error('Error al cargar las becas:', error);
         alert('Error al cargar las becas');
@@ -141,6 +148,7 @@ const cargarPisos = async () => {
     try {
         const response = await $fetch(`${config.public.backend_url}/pisos`);
         pisos.value = response;
+        console.log(response)
     } catch (error) {
         console.error('Error al cargar los pisos:', error);
         alert('Error al cargar los pisos');
@@ -180,6 +188,8 @@ const cargarCuartosPorTorre = async (torreId) => {
         alert('Error al cargar los cuartos por torre');
     }
 };
+
+
 
 // Observa cambios en torreId para cargar cuartos
 watch(torreId, (newTorreId) => {
@@ -260,8 +270,13 @@ onMounted(async () => {
     await cargarPisos();
     await cargarTorres();
     await cargarCuartos();
-    if (props.initialData) {
-        console.log('Datos iniciales:', props.initialData);
+    if(props.isEditing){
+        console.log(props.initialData)
+        becaId.value = props.initialData.cuarto.torre.piso.beca.id
+        pisoId.value = props.initialData.cuarto.torre.piso.id
+        torreId.value = props.initialData.cuarto.torre.id
+        cuartoId.value = props.initialData.cuarto.id
+
     }
 });
-</script>
+</script> 

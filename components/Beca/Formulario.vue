@@ -68,12 +68,9 @@ const enviarFormulario = async () => {
       })
     });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(errorData || 'Error en la operación');
-    }
+   
 
-    const data = await response.json();
+    const data = await response
 
     // Primero emitimos los eventos de actualización
     if (props.isEditing) {

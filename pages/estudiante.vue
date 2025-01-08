@@ -18,35 +18,35 @@
       <table class="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
+            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Foto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Apellido</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Año Académico</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Edad</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Carrera</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Facultad</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Cuarto ID</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Foto</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Número de Piso</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Beca</th>
+            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Número de Piso</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Torre</th>
+            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Cuarto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="estudiante in estudiantes" :key="estudiante.id" class="hover:bg-gray-50">
+            <td class="px-4 py-2 border-b border-gray-200 text-center">
+              <NuxtImg :src="`${config.public.backend_url}/estudiantes/foto/${estudiante.foto}`" alt="Foto del Estudiante" class="w-30 h-30 rounded-full shadow-md" />
+            </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.nombre_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.apellido_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.anio_academico }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.edad }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.carrera }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.facultad }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.numero_cuarto }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.numero_piso }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.beca?.nombre_beca }}</td>
+            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.numero_piso }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.nombre_torre }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">
-              <img :src="estudiante.foto" alt="Foto del Estudiante" class="max-w-xs rounded-lg shadow-md">
-            </td>
+            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.numero_cuarto }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
               <button @click="abrirFormulario(estudiante)" class="text-blue-500 hover:underline mr-2">Editar</button>
               <button @click="deleteEstudiante(estudiante.id)" class="text-red-500 hover:underline">Borrar</button>
@@ -67,6 +67,7 @@
 import { ref, onMounted } from 'vue';
 import EstudianteFormulario from '../components/Estudiante/Formulario.vue';
 import Modal from '../components/Modal.vue';
+import { useRuntimeConfig } from '#app';
 
 const config = useRuntimeConfig();
 
@@ -78,6 +79,7 @@ const isEditing = ref(false);
 const fetchEstudiantes = async () => {
   try {
     estudiantes.value = await $fetch(`${config.public.backend_url}/estudiantes`);
+    console.log(estudiantes)
   } catch (error) {
     console.error('Error al obtener los estudiantes:', error);
   }
