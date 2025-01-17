@@ -121,5 +121,8 @@
 </template>
 
 <script setup>
+definePageMeta({
+  auth: false   
+});
 // Lógica del componente aquí
 </script>
