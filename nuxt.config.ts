@@ -48,6 +48,7 @@ export default defineNuxtConfig({
           id: 'number',
           nombre_usuario: 'string',
           role: "'administrador' | 'gestor'",
+          twoFactorEnabled:"boolean",
           dataResponsePointer: "/",
 
         }

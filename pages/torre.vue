@@ -20,8 +20,10 @@
           <tr>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de la Torre</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Jefe de Torre</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Número de Piso</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Beca</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Número de Piso</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Nombre de Beca</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Acciones</th>
           </tr>
         </thead>
@@ -29,8 +31,10 @@
           <tr v-for="torre in torres" :key="torre.id" class="hover:bg-gray-50">
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ torre.nombre_torre }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ torre.jefe_torre }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ torre.piso?.numero_piso }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ torre.piso?.beca?.nombre_beca }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ torre.piso?.numero_piso
+              }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              torre.piso?.beca?.nombre_beca }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
               <button @click="abrirFormulario(torre)" class="text-blue-500 hover:underline mr-2">Editar</button>
               <button @click="deleteTorre(torre.id)" class="text-red-500 hover:underline">Borrar</button>
@@ -55,7 +59,6 @@ import Modal from '../components/Modal.vue';
 const config = useRuntimeConfig();
 const { token } = useAuth()
 
-
 const torres = ref([]);
 const showModal = ref(false);
 const torreSeleccionada = ref(null);
@@ -64,14 +67,10 @@ const isEditing = ref(false);
 const fetchTorres = async () => {
   try {
     torres.value = await $fetch(`${config.public.backend_url}/torres`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
   } catch (error) {
     console.error('Error al obtener las torres:', error);
   }
@@ -105,10 +104,8 @@ const deleteTorre = async (id) => {
     await $fetch(`${config.public.backend_url}/torres/delete/${id}`, {
       method: 'DELETE',
       headers: {
-
         'Authorization': token.value
       }
-
     });
 
     alert('Torre eliminada exitosamente');

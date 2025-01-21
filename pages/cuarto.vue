@@ -20,9 +20,12 @@
           <tr>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Número de Cuarto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Capacidad Máxima</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Número de Piso</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Beca</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Torre</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Número de Piso</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Nombre de Beca</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Nombre de Torre</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Acciones</th>
           </tr>
         </thead>
@@ -30,9 +33,12 @@
           <tr v-for="cuarto in cuartos" :key="cuarto.id" class="hover:bg-gray-50">
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ cuarto.numero_cuarto }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ cuarto.capacidad_maxima }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ cuarto.torre?.piso?.numero_piso }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ cuarto.torre?.piso?.beca?.nombre_beca }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ cuarto.torre?.nombre_torre }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              cuarto.torre?.piso?.numero_piso }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              cuarto.torre?.piso?.beca?.nombre_beca }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              cuarto.torre?.nombre_torre }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
               <button @click="abrirFormulario(cuarto)" class="text-blue-500 hover:underline mr-2">Editar</button>
               <button @click="deleteCuarto(cuarto.id)" class="text-red-500 hover:underline">Borrar</button>
@@ -65,14 +71,10 @@ const isEditing = ref(false);
 const fetchCuartos = async () => {
   try {
     cuartos.value = await $fetch(`${config.public.backend_url}/cuartos`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
   } catch (error) {
     console.error('Error al obtener los cuartos:', error);
   }
@@ -82,10 +84,7 @@ const abrirFormulario = (cuarto = null) => {
   cuartoSeleccionado.value = cuarto;
   isEditing.value = !!cuarto;
   showModal.value = true;
-
 };
-
-
 
 const deleteCuarto = async (id) => {
   const confirmacion = confirm('¿Está seguro de que desea eliminar este cuarto?');
@@ -97,10 +96,8 @@ const deleteCuarto = async (id) => {
     await $fetch(`${config.public.backend_url}/cuartos/delete/${id}`, {
       method: 'DELETE',
       headers: {
-
         'Authorization': token.value
       }
-
     });
 
     alert('Cuarto eliminado exitosamente');
