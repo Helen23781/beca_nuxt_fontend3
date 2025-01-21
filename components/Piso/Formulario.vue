@@ -45,6 +45,8 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
+const { token } = useAuth()
+
 
 const props = defineProps({
   initialData: Object,
@@ -65,7 +67,15 @@ const jefeFormatoError = ref(false);
 // Función para cargar las becas
 const cargarBecas = async () => {
   try {
-    const response = await $fetch(`${config.public.backend_url}/becas`);
+    const response = await $fetch(`${config.public.backend_url}/becas`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
     becas.value = response;
   } catch (error) {
     console.error('Error al cargar las becas:', error);
@@ -112,7 +122,9 @@ const enviarFormulario = async () => {
     const response = await $fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': token.value
+
       },
       body: JSON.stringify(formData)
     });

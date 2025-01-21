@@ -53,6 +53,8 @@ import TorreFormulario from '../components/Torre/Formulario.vue';
 import Modal from '../components/Modal.vue';
 
 const config = useRuntimeConfig();
+const { token } = useAuth()
+
 
 const torres = ref([]);
 const showModal = ref(false);
@@ -61,7 +63,15 @@ const isEditing = ref(false);
 
 const fetchTorres = async () => {
   try {
-    torres.value = await $fetch(`${config.public.backend_url}/torres`);
+    torres.value = await $fetch(`${config.public.backend_url}/torres`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
   } catch (error) {
     console.error('Error al obtener las torres:', error);
   }
@@ -94,6 +104,11 @@ const deleteTorre = async (id) => {
   try {
     await $fetch(`${config.public.backend_url}/torres/delete/${id}`, {
       method: 'DELETE',
+      headers: {
+
+        'Authorization': token.value
+      }
+
     });
 
     alert('Torre eliminada exitosamente');

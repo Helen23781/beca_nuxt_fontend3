@@ -52,6 +52,8 @@ import PisoFormulario from '../components/Piso/Formulario.vue';
 import Modal from '../components/Modal.vue';
 
 const config = useRuntimeConfig();
+const { token } = useAuth()
+
 
 const pisos = ref([]);
 const becas = ref([]);
@@ -76,7 +78,15 @@ const pisosConBecaAsignada = computed(() => {
 
 const fetchBecas = async () => {
   try {
-    becas.value = await $fetch(`${config.public.backend_url}/becas`);
+    becas.value = await $fetch(`${config.public.backend_url}/becas`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
   } catch (error) {
     console.error('Error al obtener las becas:', error);
   }
@@ -84,7 +94,15 @@ const fetchBecas = async () => {
 
 const fetchPisos = async () => {
   try {
-    const data = await $fetch(`${config.public.backend_url}/pisos`);
+    const data = await $fetch(`${config.public.backend_url}/pisos`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
     console.log('Pisos actualizados:', data);
     pisos.value = data;
   } catch (error) {
@@ -144,6 +162,11 @@ const deletePiso = async (id) => {
   try {
     await $fetch(`${config.public.backend_url}/pisos/delete/${id}`, {
       method: 'DELETE',
+      headers: {
+
+        'Authorization': token.value
+      }
+
     });
 
     alert('Piso eliminado exitosamente');

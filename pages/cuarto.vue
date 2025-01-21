@@ -55,6 +55,7 @@ import CuartoFormulario from '../components/Cuarto/Formulario.vue';
 import Modal from '../components/Modal.vue';
 
 const config = useRuntimeConfig();
+const { token } = useAuth()
 
 const cuartos = ref([]);
 const showModal = ref(false);
@@ -63,7 +64,15 @@ const isEditing = ref(false);
 
 const fetchCuartos = async () => {
   try {
-    cuartos.value = await $fetch(`${config.public.backend_url}/cuartos`);
+    cuartos.value = await $fetch(`${config.public.backend_url}/cuartos`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
   } catch (error) {
     console.error('Error al obtener los cuartos:', error);
   }
@@ -73,7 +82,7 @@ const abrirFormulario = (cuarto = null) => {
   cuartoSeleccionado.value = cuarto;
   isEditing.value = !!cuarto;
   showModal.value = true;
-  
+
 };
 
 
@@ -87,6 +96,11 @@ const deleteCuarto = async (id) => {
   try {
     await $fetch(`${config.public.backend_url}/cuartos/delete/${id}`, {
       method: 'DELETE',
+      headers: {
+
+        'Authorization': token.value
+      }
+
     });
 
     alert('Cuarto eliminado exitosamente');
@@ -100,4 +114,4 @@ const deleteCuarto = async (id) => {
 onMounted(async () => {
   await fetchCuartos();
 });
-</script> 
+</script>

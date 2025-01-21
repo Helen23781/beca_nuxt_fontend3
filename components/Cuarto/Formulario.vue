@@ -55,6 +55,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+const { token } = useAuth()
 
 const props = defineProps({
     initialData: Object,
@@ -84,7 +85,15 @@ const torresFiltradas = computed(() => torres.value.filter(torre => torre.pisoId
 // Funciones para cargar datos
 const cargarDatos = async (url, refData) => {
     try {
-        const response = await $fetch(url);
+        const response = await $fetch(url, {
+
+            headers: {
+
+                'Authorization': token.value
+
+            },
+        }
+        );
         refData.value = response;
     } catch (error) {
         console.error(`Error al cargar datos de ${url}:`, error);
@@ -165,7 +174,9 @@ const enviarFormulario = async () => {
         const response = await $fetch(url, {
             method,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': token.value
+
             },
             body: JSON.stringify(formData)
         });
@@ -203,4 +214,4 @@ onMounted(async () => {
         torreid.value = props.initialData.torre.id;
     }
 });
-</script> 
+</script>

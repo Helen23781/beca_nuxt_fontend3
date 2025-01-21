@@ -35,7 +35,8 @@
         <tbody>
           <tr v-for="estudiante in estudiantes" :key="estudiante.id" class="hover:bg-gray-50">
             <td class="px-4 py-2 border-b border-gray-200 text-center">
-              <NuxtImg :src="`${config.public.backend_url}/estudiantes/foto/${estudiante.foto}`" alt="Foto del Estudiante" class="w-30 h-30 rounded-full shadow-md" />
+              <NuxtImg :src="`${config.public.backend_url}/estudiantes/foto/${estudiante.foto}`"
+                alt="Foto del Estudiante" class="w-30 h-30 rounded-full shadow-md" />
             </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.nombre_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.apellido_estudiante }}</td>
@@ -43,8 +44,10 @@
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.edad }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.carrera }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.facultad }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.beca?.nombre_beca }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.numero_piso }}</td>
+            <td class="px-4 py-2 border-b border-gray-200 text-center">{{
+              estudiante.cuarto?.torre?.piso?.beca?.nombre_beca }}</td>
+            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.numero_piso }}
+            </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.nombre_torre }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.numero_cuarto }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
@@ -57,13 +60,9 @@
     </div>
 
     <Modal :visible="showModal" @close="cerrarFormulario">
-      <EstudianteFormulario 
-        :initialData="estudianteSeleccionado" 
-        :isEditing="isEditing" 
-        @estudianteCreado="handleEstudianteCreado"
-        @estudianteActualizado="fetchEstudiantes" 
-        @cerrarFormulario="cerrarFormulario" 
-      />
+      <EstudianteFormulario :initialData="estudianteSeleccionado" :isEditing="isEditing"
+        @estudianteCreado="handleEstudianteCreado" @estudianteActualizado="fetchEstudiantes"
+        @cerrarFormulario="cerrarFormulario" />
     </Modal>
   </div>
 </template>
@@ -75,6 +74,8 @@ import Modal from '../components/Modal.vue';
 import { useRuntimeConfig } from '#app';
 
 const config = useRuntimeConfig();
+const { token } = useAuth()
+
 
 const estudiantes = ref([]);
 const showModal = ref(false);
@@ -83,7 +84,15 @@ const isEditing = ref(false);
 
 const fetchEstudiantes = async () => {
   try {
-    estudiantes.value = await $fetch(`${config.public.backend_url}/estudiantes`);
+    estudiantes.value = await $fetch(`${config.public.backend_url}/estudiantes`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
     console.log(estudiantes)
   } catch (error) {
     console.error('Error al obtener los estudiantes:', error);
@@ -105,6 +114,11 @@ const deleteEstudiante = async (id) => {
   try {
     await $fetch(`${config.public.backend_url}/estudiantes/delete/${id}`, {
       method: 'DELETE',
+      headers: {
+
+        'Authorization': token.value
+      }
+
     });
 
     alert('Estudiante eliminado exitosamente');
@@ -128,4 +142,4 @@ const handleEstudianteCreado = () => {
 onMounted(async () => {
   await fetchEstudiantes();
 });
-</script> 
+</script>

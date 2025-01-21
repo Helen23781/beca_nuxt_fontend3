@@ -30,6 +30,7 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue';
+const { token } = useAuth()
 
 const props = defineProps({
   initialData: Object,
@@ -88,7 +89,9 @@ const enviarFormulario = async () => {
     const response = await $fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': token.value
+
       },
       body: JSON.stringify({
         nombre_beca: nombreBeca.value,

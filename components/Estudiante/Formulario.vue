@@ -1,7 +1,8 @@
 <template>
     <form @submit.prevent="validarYEnviar" class="max-w-lg mx-auto bg-white p-4 rounded-lg shadow-md max-h-screengap-4">
         <div class="flex justify-center mb-4">
-            <NuxtImg v-if="foto" :src="fotoUrl" alt="Vista previa de la foto" class="rounded-full h-12 w-12 object-cover"/>
+            <NuxtImg v-if="foto" :src="fotoUrl" alt="Vista previa de la foto"
+                class="rounded-full h-12 w-12 object-cover" />
         </div>
         <div class="grid grid-cols-2 gap-4">
             <div>
@@ -106,6 +107,8 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRuntimeConfig } from '#app';
+const { token } = useAuth()
+
 
 const props = defineProps({
     initialData: Object,
@@ -136,7 +139,7 @@ const opcionesCarreras = {
     "Ciencias Pedagogicas": [
         "Licenciatura en Psicopedagogia", "Licenciatura en Logopedia", "Licenciatura en Enseñanza especial", "Licenciatura en Educacion Primaria",
         "Licenciatura en Historia", "Licenciatura en Geografia", "Licenciatura en Matematicas",
-        "Licenciatura en Quimica", "Licenciatura en Español", "Licenciatura en Lenguas Extranjeras", "Licenciatura en Biologia","Marxismo Leninismo","Licenciatura en Filosofia"
+        "Licenciatura en Quimica", "Licenciatura en Español", "Licenciatura en Lenguas Extranjeras", "Licenciatura en Biologia", "Marxismo Leninismo", "Licenciatura en Filosofia"
     ],
     "Ciencias Tecnicas y Economicas": [
         "Ingieneria informatica", "Ingieneria Industrial", "Contabilidad y Finanzas",
@@ -176,7 +179,15 @@ const fotoUrl = computed(() => {
 // Función para cargar las becas
 const cargarBecas = async () => {
     try {
-        const response = await $fetch(`${config.public.backend_url}/becas`);
+        const response = await $fetch(`${config.public.backend_url}/becas`, {
+
+            headers: {
+
+                'Authorization': token.value
+
+            },
+        }
+        );
         becas.value = response;
         console.log(response)
     } catch (error) {
@@ -188,7 +199,15 @@ const cargarBecas = async () => {
 // Función para cargar los pisos
 const cargarPisos = async () => {
     try {
-        const response = await $fetch(`${config.public.backend_url}/pisos`);
+        const response = await $fetch(`${config.public.backend_url}/pisos`, {
+
+            headers: {
+
+                'Authorization': token.value
+
+            },
+        }
+        );
         pisos.value = response;
         console.log(response)
     } catch (error) {
@@ -200,7 +219,15 @@ const cargarPisos = async () => {
 // Función para cargar las torres
 const cargarTorres = async () => {
     try {
-        const response = await $fetch(`${config.public.backend_url}/torres`);
+        const response = await $fetch(`${config.public.backend_url}/torres`, {
+
+            headers: {
+
+                'Authorization': token.value
+
+            },
+        }
+        );
         torres.value = response;
     } catch (error) {
         console.error('Error al cargar las torres:', error);
@@ -211,7 +238,16 @@ const cargarTorres = async () => {
 // Función para cargar los cuartos
 const cargarCuartos = async () => {
     try {
-        const response = await $fetch(`${config.public.backend_url}/cuartos`);
+
+        const response = await $fetch(`${config.public.backend_url}/cuartos`, {
+
+            headers: {
+
+                'Authorization': token.value
+
+            },
+        }
+        );
         cuartos.value = response;
         console.log(response)
     } catch (error) {
@@ -223,7 +259,15 @@ const cargarCuartos = async () => {
 // Función para cargar los cuartos por torre
 const cargarCuartosPorTorre = async (torreId) => {
     try {
-        const response = await $fetch(`${config.public.backend_url}/cuartos/torre/${torreId}`);
+        const response = await $fetch(`${config.public.backend_url}/cuartos/torre/${torreId}`, {
+
+            headers: {
+
+                'Authorization': token.value
+
+            },
+        }
+        );
         cuartos.value = response;
     } catch (error) {
         console.error('Error al cargar los cuartos por torre:', error);
@@ -290,7 +334,7 @@ const enviarFormulario = async () => {
     formData.append('carrera', carrera.value);
     formData.append('facultad', facultad.value);
     formData.append('cuartoId', cuartoId.value);
-    
+
     if (foto.value) {
         const fileInput = document.getElementById('foto');
         if (fileInput && fileInput.files.length > 0) {

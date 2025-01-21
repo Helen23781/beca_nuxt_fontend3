@@ -47,6 +47,8 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+const { token } = useAuth()
+
 
 const props = defineProps({
   initialData: Object,
@@ -85,7 +87,15 @@ const cargarBecas = async () => {
 // Función para cargar los pisos
 const cargarPisos = async () => {
   try {
-    const response = await $fetch(`${config.public.backend_url}/pisos`);
+    const response = await $fetch(`${config.public.backend_url}/pisos`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
     pisos.value = response;
   } catch (error) {
     console.error('Error al cargar los pisos:', error);
@@ -158,7 +168,9 @@ const enviarFormulario = async () => {
     const response = await $fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': token.value
+
       },
       body: JSON.stringify(formData)
     });

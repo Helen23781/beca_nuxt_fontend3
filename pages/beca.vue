@@ -44,6 +44,7 @@ import { ref, onMounted } from 'vue';
 import BecaFormulario from '../components/Beca/Formulario.vue';
 
 const config = useRuntimeConfig();
+const { token } = useAuth()
 
 const becas = ref([]);
 const showModal = ref(false);
@@ -52,7 +53,15 @@ const isEditing = ref(false);
 
 const fetchBecas = async () => {
   try {
-    const data = await $fetch(`${config.public.backend_url}/becas`);
+    const data = await $fetch(`${config.public.backend_url}/becas`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
     becas.value = data;
   } catch (error) {
     console.error('Error al obtener las becas:', error);
@@ -81,6 +90,11 @@ const deleteBeca = async (id) => {
   try {
     await $fetch(`${config.public.backend_url}/becas/delete/${id}`, {
       method: 'DELETE',
+      headers: {
+
+        'Authorization': token.value
+      }
+
     });
     alert('Beca eliminada exitosamente');
     fetchBecas();
