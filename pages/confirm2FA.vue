@@ -123,6 +123,7 @@ const enableTwoFactor = async () => {
 
 onMounted(async () => {
     if (!is2FAEnabled.value) {
+        console.log("lalalallalalalalalalalalalall")
         try {
             const response = await $fetch(`${config.public.backend_url}/auth/2fa/generate`, {
                 method: 'POST',

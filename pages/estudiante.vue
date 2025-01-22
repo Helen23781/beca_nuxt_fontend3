@@ -18,6 +18,7 @@
       <table class="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
+            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Foto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Apellido</th>
             <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Año
@@ -41,6 +42,12 @@
         </thead>
         <tbody>
           <tr v-for="estudiante in estudiantes" :key="estudiante.id" class="hover:bg-gray-50">
+            <td class="px-4 py-2 border-b border-gray-200 text-center">
+              <NuxtImg
+                :src="estudiante.foto ? `${config.public.backend_url}/estudiantes/foto/${estudiante.foto}` : '/images/avatar.jpg'"
+                alt="Foto del estudiante" class="w-10 h-10 rounded-full object-cover"
+                @error="event => event.target.src = '/images/avatar.jpg'" />
+            </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.nombre_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.apellido_estudiante }}</td>
             <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.anio_academico
@@ -59,6 +66,7 @@
             <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
               estudiante.cuarto?.numero_cuarto }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
+              <button @click="mostrarEstudiante(estudiante)" class="text-blue-500 hover:underline mr-2">Mostrar</button>
               <button @click="abrirFormulario(estudiante)" class="text-blue-500 hover:underline mr-2">Editar</button>
               <button @click="deleteEstudiante(estudiante.id)" class="text-red-500 hover:underline">Borrar</button>
             </td>
@@ -68,18 +76,20 @@
     </div>
 
     <Modal :visible="showModal" @close="cerrarFormulario">
-      <EstudianteFormulario :initialData="estudianteSeleccionado" :isEditing="isEditing"
+      <EstudianteFormulario :initialData="estudianteSeleccionado" :isEditing="isEditing" :isReadOnly="isReadOnly"
         @estudianteCreado="handleEstudianteCreado" @estudianteActualizado="fetchEstudiantes"
         @cerrarFormulario="cerrarFormulario" />
     </Modal>
+
+    <!-- Modal o componente para mostrar los detalles del estudiante -->
+    <Formulario v-if="estudianteSeleccionado" :initialData="estudianteSeleccionado" :isEditing="false"
+      @cerrarFormulario="cerrarFormulario" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import EstudianteFormulario from '../components/Estudiante/Formulario.vue';
-import Modal from '../components/Modal.vue';
-import { useRuntimeConfig } from '#app';
+
+
 
 const config = useRuntimeConfig();
 const { token } = useAuth()
@@ -88,6 +98,7 @@ const estudiantes = ref([]);
 const showModal = ref(false);
 const estudianteSeleccionado = ref(null);
 const isEditing = ref(false);
+const isReadOnly = ref(false);
 
 const fetchEstudiantes = async () => {
   try {
@@ -138,6 +149,13 @@ const cerrarFormulario = () => {
 const handleEstudianteCreado = () => {
   fetchEstudiantes();
   cerrarFormulario();
+};
+
+const mostrarEstudiante = (estudiante) => {
+  estudianteSeleccionado.value = estudiante;
+  isEditing.value = false;
+  isReadOnly.value = true;
+  showModal.value = true;
 };
 
 onMounted(async () => {

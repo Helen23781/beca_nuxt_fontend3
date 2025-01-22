@@ -8,27 +8,32 @@
             <div>
                 <label for="nombreEstudiante" class="block text-gray-700 font-bold mb-1">Nombre:</label>
                 <input type="text" id="nombreEstudiante" v-model="nombreEstudiante" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly" />
             </div>
             <div>
                 <label for="apellidoEstudiante" class="block text-gray-700 font-bold mb-1">Apellido:</label>
                 <input type="text" id="apellidoEstudiante" v-model="apellidoEstudiante" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly" />
             </div>
             <div>
                 <label for="anioAcademico" class="block text-gray-700 font-bold mb-1">Año Académico:</label>
                 <input type="number" id="anioAcademico" v-model="anioAcademico" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly" />
             </div>
             <div>
                 <label for="edad" class="block text-gray-700 font-bold mb-1">Edad:</label>
                 <input type="number" id="edad" v-model="edad" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly" />
             </div>
             <div>
                 <label for="facultad" class="block text-gray-700 font-bold mb-1">Facultad:</label>
                 <select id="facultad" v-model="facultad" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly">
                     <option value="">Seleccione una facultad</option>
                     <option value="Ciencias Tecnicas y Economicas">Ciencias Técnicas y Económicas</option>
                     <option value="Ciencias Pedagogicas">Ciencias Pedagógicas</option>
@@ -40,7 +45,8 @@
             <div>
                 <label for="carrera" class="block text-gray-700 font-bold mb-1">Carrera:</label>
                 <select id="carrera" v-model="carrera" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly">
                     <option value="">Seleccione una carrera</option>
                     <option v-for="c in carrerasFiltradas" :key="c" :value="c">{{ c }}</option>
                 </select>
@@ -48,7 +54,8 @@
             <div>
                 <label for="becaId" class="block text-gray-700 font-bold mb-1">Beca:</label>
                 <select id="becaId" v-model="becaId" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly">
                     <option value="">Seleccione una beca</option>
                     <option v-for="beca in becas" :key="beca.id" :value="beca.id">
                         {{ beca.nombre_beca }}
@@ -58,7 +65,8 @@
             <div>
                 <label for="pisoId" class="block text-gray-700 font-bold mb-1">Piso:</label>
                 <select id="pisoId" v-model="pisoId" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly">
                     <option value="">Seleccione un piso</option>
                     <option v-for="piso in pisosFiltrados" :key="piso.id" :value="piso.id">
                         {{ piso.numero_piso }}
@@ -68,7 +76,8 @@
             <div>
                 <label for="torreId" class="block text-gray-700 font-bold mb-1">Torre:</label>
                 <select id="torreId" v-model="torreId" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly">
                     <option value="">Seleccione una torre</option>
                     <option v-for="torre in torresFiltradas" :key="torre.id" :value="torre.id">
                         {{ torre.nombre_torre }}
@@ -78,7 +87,8 @@
             <div>
                 <label for="cuartoId" class="block text-gray-700 font-bold mb-1">Cuarto:</label>
                 <select id="cuartoId" v-model="cuartoId" required
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly">
                     <option value="">Seleccione un cuarto</option>
                     <option v-for="cuarto in cuartos" :key="cuarto.id" :value="cuarto.id">
                         {{ cuarto.numero_cuarto }}
@@ -88,7 +98,8 @@
             <div>
                 <label for="foto" class="block text-gray-700 font-bold mb-1">Foto:</label>
                 <input type="file" id="foto" @change="handleFileChange"
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    :disabled="isReadOnly" />
             </div>
         </div>
         <div class="flex justify-end space-x-2 mt-4">
@@ -112,7 +123,8 @@ const { token } = useAuth()
 
 const props = defineProps({
     initialData: Object,
-    isEditing: Boolean
+    isEditing: Boolean,
+    isReadOnly: Boolean
 });
 
 const emit = defineEmits(['estudianteCreado', 'estudianteActualizado', 'cerrarFormulario']);
@@ -171,10 +183,14 @@ const torresFiltradas = computed(() => {
     return torres.value.filter(torre => torre.pisoId === pisoId.value);
 });
 
+
 // Computed para obtener la URL de la foto desde el backend
 const fotoUrl = computed(() => {
-    return foto.value && !foto.value.startsWith('data:') ? `${config.public.backend_url}/estudiantes/foto/${foto.value}` : foto.value;
+    return foto.value && !foto.value.startsWith('data:')
+        ? `${config.public.backend_url}/estudiantes/foto/${foto.value}`
+        : foto.value;
 });
+
 
 // Función para cargar las becas
 const cargarBecas = async () => {
@@ -347,6 +363,9 @@ const enviarFormulario = async () => {
     try {
         const response = await $fetch(url, {
             method,
+            headers: {
+                'Authorization': token.value
+            },
             body: formData
         });
 
@@ -422,7 +441,7 @@ onMounted(async () => {
     await cargarPisos();
     await cargarTorres();
     await cargarCuartos();
-    if (props.isEditing) {
+    if (props.isEditing || props.isReadOnly) {
         console.log(props.initialData);
         becaId.value = props.initialData.cuarto.torre.piso.beca.id;
         pisoId.value = props.initialData.cuarto.torre.piso.id;
@@ -430,4 +449,6 @@ onMounted(async () => {
         cuartoId.value = props.initialData.cuarto.id;
     }
 });
+
+
 </script>
