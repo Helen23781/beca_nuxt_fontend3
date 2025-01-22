@@ -4,7 +4,7 @@
       <label for="nombreTorre" class="block text-gray-700 font-bold mb-2">Nombre de la Torre:</label>
       <input type="text" id="nombreTorre" v-model="nombreTorre" required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        :class="{ 'border-red-500': nombreError }" />
+        :class="{ 'border-red-500': nombreError }" :disabled="props.isShowing" />
       <p v-if="nombreError" class="text-red-500 text-sm mt-1">El nombre debe comenzar con una letra mayúscula y solo
         contener letras</p>
     </div>
@@ -12,14 +12,15 @@
       <label for="jefeTorre" class="block text-gray-700 font-bold mb-2">Jefe de Torre:</label>
       <input type="text" id="jefeTorre" v-model="jefeTorre" required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        :class="{ 'border-red-500': jefeError || jefeFormatoError }" />
+        :class="{ 'border-red-500': jefeError || jefeFormatoError }" :disabled="props.isShowing" />
       <p v-if="jefeError" class="text-red-500 text-sm mt-1">El nombre del jefe debe comenzar con mayúscula</p>
       <p v-if="jefeFormatoError" class="text-red-500 text-sm mt-1">No se admiten números ni símbolos</p>
     </div>
     <div class="mb-4">
       <label for="becaId" class="block text-gray-700 font-bold mb-2">Beca:</label>
       <select id="becaId" v-model="becaId" required
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        :disabled="props.isShowing">
         <option value="">Seleccione una beca</option>
         <option v-for="beca in becas" :key="beca.id" :value="beca.id">
           {{ beca.nombre_beca }}
@@ -29,16 +30,18 @@
     <div class="mb-4">
       <label for="pisoId" class="block text-gray-700 font-bold mb-2">Piso:</label>
       <select id="pisoId" v-model="pisoId" required
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        :disabled="props.isShowing">
         <option value="">Seleccione un piso</option>
         <option v-for="piso in pisosFiltrados" :key="piso.id" :value="piso.id">
           {{ piso.numero_piso }}
         </option>
       </select>
     </div>
-    <div class="flex justify-end space-x-2">
+    <div class="flex justify-end space-x-2" v-if="!isShowing">
       <button type="submit"
-        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        :disabled="props.isShowing">
         {{ isEditing ? 'Actualizar Torre' : 'Crear Torre' }}
       </button>
     </div>
@@ -52,8 +55,10 @@ const { token } = useAuth()
 
 const props = defineProps({
   initialData: Object,
-  isEditing: Boolean
+  isEditing: Boolean,
+  isShowing: Boolean
 });
+
 
 const emit = defineEmits(['torreCreada', 'torreActualizada', 'cerrarFormulario']);
 
@@ -76,7 +81,15 @@ const pisosFiltrados = computed(() => {
 // Función para cargar las becas
 const cargarBecas = async () => {
   try {
-    const response = await $fetch(`${config.public.backend_url}/becas`);
+    const response = await $fetch(`${config.public.backend_url}/becas`, {
+
+      headers: {
+
+        'Authorization': token.value
+
+      },
+    }
+    );
     becas.value = response;
   } catch (error) {
     console.error('Error al cargar las becas:', error);
