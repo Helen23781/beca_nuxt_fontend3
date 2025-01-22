@@ -56,6 +56,10 @@
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600">
                 Estudiantes
               </NuxtLink>
+              <button @click="accederUsuarios"
+                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600">
+                Usuarios
+              </button>
             </div>
           </div>
         </div>
@@ -97,6 +101,10 @@
           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600">
           Estudiantes
         </NuxtLink>
+        <NuxtLink to="/usuarios" @click="closeMenu"
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600">
+          Usuarios
+        </NuxtLink>
         <div v-if="loggedIn">
           <button @click="handleSignOut"
             class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600">
@@ -110,10 +118,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-const { signOut, status, token } = useAuth();
+const { signOut, status, token, user } = useAuth();
 
 const loggedIn = computed(() => status.value === "authenticated");
 const isMenuOpen = ref(false);
+
+// Suponiendo que el rol del usuario está disponible en el objeto `user`
+const userRole = computed(() => user.value?.role);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -126,6 +137,17 @@ const closeMenu = () => {
 const handleSignOut = async () => {
   await signOut({ callbackUrl: "/", redirect: true });
 };
+
+const accederUsuarios = () => {
+  if (userRole.value !== 'administrador') {
+    alert('Usted no tiene acceso a los Usuarios.');
+  } else {
+    // Redirigir a la página de usuarios
+    window.location.href = '/usuarios';
+  }
+};
+
+console.log("Token:", token.value);
 </script>
 
 <style>
