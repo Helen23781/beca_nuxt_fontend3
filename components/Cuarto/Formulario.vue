@@ -2,17 +2,17 @@
     <form @submit.prevent="validarYEnviar" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
         <div class="mb-4">
             <label for="numeroCuarto" class="block text-gray-700 font-bold mb-2">Número de Cuarto:</label>
-            <input type="text" id="numeroCuarto" v-model="numeroCuarto" required
+            <input type="text" id="numeroCuarto" v-model="numeroCuarto" :disabled="isShowing" required
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
         </div>
         <div class="mb-4">
             <label for="capacidadMaxima" class="block text-gray-700 font-bold mb-2">Capacidad Máxima:</label>
-            <input type="number" id="capacidadMaxima" v-model="capacidadMaxima" required
+            <input type="number" id="capacidadMaxima" v-model="capacidadMaxima" :disabled="isShowing" required
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
         </div>
         <div class="mb-4">
             <label for="becaId" class="block text-gray-700 font-bold mb-2">Beca:</label>
-            <select id="becaId" v-model="becaId" required
+            <select id="becaId" v-model="becaId" :disabled="isShowing" required
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 <option value="">Seleccione una beca</option>
                 <option v-for="beca in becas" :key="beca.id" :value="beca.id">
@@ -22,7 +22,7 @@
         </div>
         <div class="mb-4">
             <label for="pisoId" class="block text-gray-700 font-bold mb-2">Piso:</label>
-            <select id="pisoId" v-model="pisoId" required
+            <select id="pisoId" v-model="pisoId" :disabled="isShowing" required
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 <option value="">Seleccione un piso</option>
                 <option v-for="piso in pisosFiltrados" :key="piso.id" :value="piso.id">
@@ -32,7 +32,7 @@
         </div>
         <div class="mb-4">
             <label for="torreId" class="block text-gray-700 font-bold mb-2">Torre:</label>
-            <select id="torreId" v-model="torreid" required
+            <select id="torreId" v-model="torreid" :disabled="isShowing" required
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 <option value="">Seleccione una torre</option>
                 <option v-for="torre in torresFiltradas" :key="torre.id" :value="torre.id">
@@ -41,11 +41,11 @@
             </select>
         </div>
         <div class="flex justify-end space-x-2">
-            <button type="button" @click="cancelarFormulario"
+            <button v-if="!isShowing" type="button" @click="cancelarFormulario"
                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Cancelar
             </button>
-            <button type="submit"
+            <button v-if="!isShowing" type="submit"
                 class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 {{ isEditing ? 'Actualizar Cuarto' : 'Crear Cuarto' }}
             </button>
@@ -59,7 +59,8 @@ const { token } = useAuth()
 
 const props = defineProps({
     initialData: Object,
-    isEditing: Boolean
+    isEditing: Boolean,
+    isShowing: Boolean
 });
 
 const emit = defineEmits(['cuartoCreado', 'cuartoActualizado', 'cerrarFormulario']);
@@ -165,8 +166,16 @@ const enviarFormulario = async () => {
     const formData = {
         numero_cuarto: numeroCuarto.value,
         capacidad_maxima: capacidadMaxima.value,
-        torreid: parseInt(torreid.value)
+        torreid: torreid.value,
+        pisoId: pisoId.value,
+        becaId: becaId.value
     };
+
+    // Verifica que todos los campos requeridos estén presentes y sean válidos
+    if (!formData.numero_cuarto || !formData.capacidad_maxima || !formData.torreid || !formData.pisoId || !formData.becaId) {
+        alert('Por favor, complete todos los campos requeridos.');
+        return;
+    }
 
     console.log('Datos enviados:', formData);
 
@@ -176,7 +185,6 @@ const enviarFormulario = async () => {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token.value
-
             },
             body: JSON.stringify(formData)
         });
@@ -187,7 +195,7 @@ const enviarFormulario = async () => {
             emit('cuartoActualizado', data);
         } else {
             emit('cuartoCreado', data);
-            localStorage.removeItem('cuartoData'); // Limpiar localStorage después de la creación
+            localStorage.removeItem('cuartoData');
         }
 
         emit('cerrarFormulario');
@@ -204,11 +212,16 @@ const enviarFormulario = async () => {
 
 onMounted(async () => {
     await cargarDatos(`${config.public.backend_url}/becas`, becas);
-    await cargarDatos(`${config.public.backend_url}/pisos`, pisos);
-    await cargarDatos(`${config.public.backend_url}/torres`, torres);
+    console.log('Becas cargadas:', becas.value);
 
-    if (props.isEditing) {
-        console.log(props.initialData);
+    await cargarDatos(`${config.public.backend_url}/pisos`, pisos);
+    console.log('Pisos cargados:', pisos.value);
+
+    await cargarDatos(`${config.public.backend_url}/torres`, torres);
+    console.log('Torres cargadas:', torres.value);
+
+    if (props.isEditing || props.isShowing) {
+        console.log('Datos iniciales:', props.initialData);
         becaId.value = props.initialData.torre.piso.beca.id;
         pisoId.value = props.initialData.torre.piso.id;
         torreid.value = props.initialData.torre.id;

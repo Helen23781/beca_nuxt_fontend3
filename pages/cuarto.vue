@@ -41,7 +41,8 @@
               cuarto.torre?.nombre_torre }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
               <button @click="abrirFormulario(cuarto)" class="text-blue-500 hover:underline mr-2">Editar</button>
-              <button @click="deleteCuarto(cuarto.id)" class="text-red-500 hover:underline">Borrar</button>
+              <button @click="deleteCuarto(cuarto.id)" class="text-red-500 hover:underline mr-2">Borrar</button>
+              <button @click="abrirFormulario(cuarto, true)" class="text-green-500 hover:underline">Mostrar</button>
             </td>
           </tr>
         </tbody>
@@ -49,8 +50,8 @@
     </div>
 
     <Modal :visible="showModal" @close="showModal = false">
-      <CuartoFormulario :initialData="cuartoSeleccionado" :isEditing="isEditing" @cuartoCreado="fetchCuartos"
-        @cuartoActualizado="fetchCuartos" @cerrarFormulario="showModal = false" />
+      <CuartoFormulario :initialData="cuartoSeleccionado" :isEditing="isEditing" :isShowing="isShowing"
+        @cuartoCreado="fetchCuartos" @cuartoActualizado="fetchCuartos" @cerrarFormulario="showModal = false" />
     </Modal>
   </div>
 </template>
@@ -67,6 +68,7 @@ const cuartos = ref([]);
 const showModal = ref(false);
 const cuartoSeleccionado = ref(null);
 const isEditing = ref(false);
+const isShowing = ref(false);
 
 const fetchCuartos = async () => {
   try {
@@ -80,9 +82,10 @@ const fetchCuartos = async () => {
   }
 };
 
-const abrirFormulario = (cuarto = null) => {
+const abrirFormulario = (cuarto = null, mostrar = false) => {
   cuartoSeleccionado.value = cuarto;
-  isEditing.value = !!cuarto;
+  isEditing.value = !!cuarto && !mostrar;
+  isShowing.value = mostrar;
   showModal.value = true;
 };
 
