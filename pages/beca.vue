@@ -43,6 +43,17 @@
 import { ref, onMounted } from 'vue';
 import BecaFormulario from '../components/Beca/Formulario.vue';
 
+
+// Configuración de SEO
+useSeoMeta({
+  title: 'Gestión de Becas - UNISS',
+  ogTitle: 'Gestión de Becas - UNISS',
+  description: 'Administra y visualiza la lista de becas disponibles en las residencias universitarias de UNISS.',
+  ogDescription: 'Administra y visualiza la lista de becas disponibles en las residencias universitarias de UNISS.',
+  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  keywords: 'gestión de becas, UNISS, residencias universitarias, administración de becas'
+});
+
 const config = useRuntimeConfig();
 const { token } = useAuth()
 

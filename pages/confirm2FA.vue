@@ -59,7 +59,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-// import { CheckCircleIcon, XCircleIcon } from 'lucide-vue-next'
+
 
 const { token, data } = useAuth()
 const router = useRouter()
@@ -73,6 +73,16 @@ const qrCodeUrl = ref('')
 const secretKey = ref('')
 
 const config = useRuntimeConfig();
+
+// Configuración de SEO
+useSeoMeta({
+    title: 'Confirmación de 2FA - UNISS',
+    ogTitle: 'Confirmación de 2FA - UNISS',
+    description: 'Verifica tu identidad con la autenticación de dos factores en la plataforma de UNISS.',
+    ogDescription: 'Verifica tu identidad con la autenticación de dos factores en la plataforma de UNISS.',
+    ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+    keywords: '2FA, autenticación de dos factores, seguridad, UNISS'
+});
 
 const messageClass = computed(() => {
     return isSuccess.value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

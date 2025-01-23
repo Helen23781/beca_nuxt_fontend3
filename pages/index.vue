@@ -19,8 +19,20 @@
 </template>
 
 <script setup>
-definePageMeta({
-  auth: false   
+
+
+// Configuración de SEO
+useSeoMeta({
+    title: 'Bienvenido a UNISS - Explora y Gestiona',
+    ogTitle: 'Bienvenido a UNISS - Explora y Gestiona',
+    description: 'Explora las oportunidades y gestiona tus residencias universitarias con UNISS.',
+    ogDescription: 'Explora las oportunidades y gestiona tus residencias universitarias con UNISS.',
+    ogImage: '/images/logo.jpg',
+    keywords: 'UNISS, gestión de residencias, explorar oportunidades, universidad'
 });
 
+// Configuración de la página
+definePageMeta({
+    auth: false
+});
 </script>

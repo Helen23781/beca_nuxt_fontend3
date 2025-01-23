@@ -64,6 +64,13 @@
             </div>
           </div>
         </div>
+        <!-- Botón de perfil -->
+        <div v-if="loggedIn">
+          <button @click="mostrarPerfil"
+            class="text-gray-700 font-medium hover:text-blue-600 transition-colors duration-300">
+            Perfil
+          </button>
+        </div>
       </div>
 
       <div v-if="!loggedIn" class="hidden sm:block">
@@ -112,8 +119,16 @@
             Cerrar Sesión
           </button>
         </div>
+        <NuxtLink to="#" @click="mostrarPerfil"
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600">
+          Perfil
+        </NuxtLink>
       </div>
     </div>
+
+    <Modal :visible="showProfileModal" @close="cerrarPerfil">
+      <PerfilUsuario />
+    </Modal>
   </header>
 </template>
 
@@ -140,6 +155,15 @@ const handleSignOut = async () => {
   await signOut({ callbackUrl: "/", redirect: true })
 }
 
+const showProfileModal = ref(false);
+
+const mostrarPerfil = () => {
+  showProfileModal.value = true;
+};
+
+const cerrarPerfil = () => {
+  showProfileModal.value = false;
+};
 
 </script>
 

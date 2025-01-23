@@ -67,6 +67,16 @@ const torreSeleccionada = ref(null);
 const isEditing = ref(false);
 const isShowing = ref(false);
 
+// Configuración de SEO
+useSeoMeta({
+  title: 'Gestión de torres universitarias',
+  ogTitle: 'Gestión de torres universitarias',
+  description: 'Sistema integral para la gestión de torres y pisos en residencias universitarias.',
+  ogDescription: 'Sistema integral para la gestión de torres y pisos en residencias universitarias.',
+  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  keywords: 'gestión de torres, residencias universitarias, administración de pisos, control de habitaciones'
+});
+
 const fetchTorres = async () => {
   try {
     torres.value = await $fetch(`${config.public.backend_url}/torres`, {

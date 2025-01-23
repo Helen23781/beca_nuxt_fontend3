@@ -38,6 +38,16 @@ definePageMeta({
   },
 });
 
+// Configuración de SEO
+useSeoMeta({
+  title: 'Iniciar sesión - Plataforma de gestión',
+  ogTitle: 'Iniciar sesión - Plataforma de gestión',
+  description: 'Accede a la plataforma de gestión de residencias universitarias.',
+  ogDescription: 'Accede a la plataforma de gestión de residencias universitarias.',
+  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  keywords: 'iniciar sesión, plataforma de gestión, residencias universitarias'
+});
+
 const handleSignIn = async () => {
   try {
     await signIn({ nombre_usuario: nombre_usuario.value, contrasena: contrasena.value },

@@ -121,8 +121,21 @@
 </template>
 
 <script setup>
+
+
+// Configuración de SEO
+useSeoMeta({
+    title: 'Explora los recursos y oportunidades en UNISS',
+    ogTitle: 'Explora los recursos y oportunidades en UNISS',
+    description: 'Descubre los recursos disponibles y las oportunidades en las residencias universitarias de UNISS.',
+    ogDescription: 'Descubre los recursos disponibles y las oportunidades en las residencias universitarias de UNISS.',
+    ogImage: '/images/logo.jpeg',
+    keywords: 'explorar recursos, oportunidades UNISS, residencias universitarias, gestión de becas'
+});
+
+// Configuración de la página
 definePageMeta({
-  auth: false   
+    auth: false
 });
 // Lógica del componente aquí
 </script>

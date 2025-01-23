@@ -4,7 +4,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-12-14',
   devtools: { enabled: true },
   
-  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', "@sidebase/nuxt-auth"],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxt/image',
+    "@sidebase/nuxt-auth",
+    "@nuxtjs/seo"
+  ],
   // postcss: {
    // plugins: {
    //   tailwindcss: {},
@@ -78,7 +83,44 @@ export default defineNuxtConfig({
       isEnabled: true,
       allow404WithoutAuth: true
     }
-  }
+  },
 
+  robots: {
+    enabled: true,
+    robotsEnabledValue: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  },
+  sitemap: {
+    enabled: true,
+    autoLastmod: true,
+    xsl: false,
 
+  },
+
+ app: {
+    head: {
+      meta: [
+        { name: 'robots', content: 'index, follow' },
+        { name: 'googlebot', content: 'index, follow' },
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      ],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/images/logo.jpg' },
+      ],
+    }
+  },
+
+  site: {
+    url: "https://localhost",
+    name: "Residencia Universitaria UNISS",
+    description:
+      "Gestionamos todos los datos de los estudiantes y profesores internos, incluyendo las becas, pisos, torres y cuartos a los que pertenecen.",
+    defaultLocale: "es",
+  },
+  schemaOrg: {
+    identity: {
+      type: "Organization",
+      name: "Residencia Universitaria UNISS",
+    },
+  },
 })

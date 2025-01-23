@@ -17,7 +17,6 @@
                 <tr>
                     <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de
                         Usuario</th>
-                    <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Contraseña</th>
                     <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Rol</th>
                     <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Acciones</th>
                 </tr>
@@ -25,7 +24,6 @@
             <tbody>
                 <tr v-for="usuario in usuarios" :key="usuario.id" class="hover:bg-gray-50">
                     <td class="px-4 py-2 border-b border-gray-200 text-center">{{ usuario.nombre_usuario }}</td>
-                    <td class="px-4 py-2 border-b border-gray-200 text-center">{{ usuario.contrasena }}</td>
                     <td class="px-4 py-2 border-b border-gray-200 text-center">{{ usuario.role }}</td>
                     <td class="px-4 py-2 border-b border-gray-200 text-center">
                         <button @click="abrirFormulario(usuario)"
@@ -54,6 +52,16 @@ const usuarios = ref([]);
 const showModal = ref(false);
 const usuarioSeleccionado = ref(null);
 const isEditing = ref(false);
+
+// Configuración de SEO
+useSeoMeta({
+    title: 'Gestión de residencias universitarias',
+    ogTitle: 'Gestión de residencias universitarias',
+    description: 'Sistema integral para la gestión de residencias y becas universitarias.',
+    ogDescription: 'Sistema integral para la gestión de residencias y becas universitarias.',
+    ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+    keywords: 'residencias universitarias, gestión de becas, administración de pisos, control de habitaciones'
+});
 
 const fetchUsuarios = async () => {
     try {

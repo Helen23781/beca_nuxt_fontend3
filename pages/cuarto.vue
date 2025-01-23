@@ -61,6 +61,17 @@ import { ref, onMounted } from 'vue';
 import CuartoFormulario from '../components/Cuarto/Formulario.vue';
 import Modal from '../components/Modal.vue';
 
+
+// Configuración de SEO
+useSeoMeta({
+  title: 'Gestión de Cuartos - UNISS',
+  ogTitle: 'Gestión de Cuartos - UNISS',
+  description: 'Administra y visualiza la lista de cuartos en las residencias universitarias de UNISS.',
+  ogDescription: 'Administra y visualiza la lista de cuartos en las residencias universitarias de UNISS.',
+  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  keywords: 'gestión de cuartos, UNISS, residencias universitarias, administración de habitaciones'
+});
+
 const config = useRuntimeConfig();
 const { token } = useAuth()
 

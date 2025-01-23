@@ -18,7 +18,8 @@
       <table class="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Foto</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Foto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Apellido</th>
             <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Año
@@ -42,11 +43,11 @@
         </thead>
         <tbody>
           <tr v-for="estudiante in estudiantes" :key="estudiante.id" class="hover:bg-gray-50">
-            <td class="px-4 py-2 border-b border-gray-200 text-center">
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">
               <NuxtImg
                 :src="estudiante.foto ? `${config.public.backend_url}/estudiantes/foto/${estudiante.foto}` : '/images/avatar.jpg'"
-                alt="Foto del estudiante" class="w-10 h-10 rounded-full object-cover"
-                @error="event => event.target.src = '/images/avatar.jpg'" />
+                alt="Foto del estudiante" class="w-10 h-10 rounded-full object-cover cursor-pointer"
+                @click="mostrarFoto(estudiante.foto)" @error="event => event.target.src = '/images/avatar.jpg'" />
             </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.nombre_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.apellido_estudiante }}</td>
@@ -81,6 +82,12 @@
         @cerrarFormulario="cerrarFormulario" />
     </Modal>
 
+    <!-- Modal para mostrar la foto en grande -->
+    <div v-if="fotoGrande" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+      @click="cerrarFoto">
+      <img :src="fotoGrande" alt="Foto del estudiante" class="max-w-full max-h-full" />
+    </div>
+
     <!-- Modal o componente para mostrar los detalles del estudiante -->
     <Formulario v-if="estudianteSeleccionado" :initialData="estudianteSeleccionado" :isEditing="false"
       @cerrarFormulario="cerrarFormulario" />
@@ -90,6 +97,15 @@
 <script setup>
 
 
+// Configuración de SEO
+useSeoMeta({
+  title: 'Gestión de Estudiantes - UNISS',
+  ogTitle: 'Gestión de Estudiantes - UNISS',
+  description: 'Administra y visualiza la lista de estudiantes en las residencias universitarias de UNISS.',
+  ogDescription: 'Administra y visualiza la lista de estudiantes en las residencias universitarias de UNISS.',
+  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  keywords: 'gestión de estudiantes, UNISS, residencias universitarias, administración de becas'
+});
 
 const config = useRuntimeConfig();
 const { token } = useAuth()
@@ -99,6 +115,7 @@ const showModal = ref(false);
 const estudianteSeleccionado = ref(null);
 const isEditing = ref(false);
 const isReadOnly = ref(false);
+const fotoGrande = ref(null);
 
 const fetchEstudiantes = async () => {
   try {
@@ -156,6 +173,16 @@ const mostrarEstudiante = (estudiante) => {
   isEditing.value = false;
   isReadOnly.value = true;
   showModal.value = true;
+};
+
+const mostrarFoto = (foto) => {
+  if (foto) {
+    fotoGrande.value = `${config.public.backend_url}/estudiantes/foto/${foto}`;
+  }
+};
+
+const cerrarFoto = () => {
+  fotoGrande.value = null;
 };
 
 onMounted(async () => {

@@ -54,6 +54,15 @@ import Modal from '../components/Modal.vue';
 const config = useRuntimeConfig();
 const { token } = useAuth()
 
+// Configuración de SEO
+useSeoMeta({
+  title: 'Administración de pisos universitarios',
+  ogTitle: 'Administración de pisos universitarios',
+  description: 'Sistema integral para la gestión de pisos y becas en residencias universitarias.',
+  ogDescription: 'Sistema integral para la gestión de pisos y becas en residencias universitarias.',
+  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  keywords: 'administración de pisos, residencias universitarias, gestión de becas, control de habitaciones'
+});
 
 const pisos = ref([]);
 const becas = ref([]);
