@@ -29,8 +29,12 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from 'vue';
 const { token } = useAuth()
+
+import { useToast } from 'vue-toastification'
+
+// Agregar el toast
+const toast = useToast()
 
 const props = defineProps({
   initialData: Object,
@@ -120,9 +124,8 @@ const enviarFormulario = async () => {
     emit('cerrarFormulario');
 
     // Mostramos el mensaje de éxito después de cerrar
-    setTimeout(() => {
-      alert(props.isEditing ? 'Beca actualizada exitosamente' : 'Beca creada exitosamente');
-    }, 100);
+    toast.success(props.isEditing ? 'Beca actualizada exitosamente' : 'Beca creada exitosamente')
+
 
     // Limpiar localStorage después de crear
     if (!props.isEditing) {
@@ -130,9 +133,11 @@ const enviarFormulario = async () => {
     }
 
   } catch (error) {
-    console.error('Error:', error);
-    // En caso de error, mostramos el mensaje pero no cerramos el formulario
-    alert(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+    console.error('Error fetching books:', error);
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 

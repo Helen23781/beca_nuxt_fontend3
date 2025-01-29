@@ -43,6 +43,11 @@
 import { ref, onMounted } from 'vue';
 import BecaFormulario from '../components/Beca/Formulario.vue';
 
+import { useToast } from 'vue-toastification'
+
+// Agregar el toast
+const toast = useToast()
+
 
 // Configuración de SEO
 useSeoMeta({
@@ -75,7 +80,11 @@ const fetchBecas = async () => {
     );
     becas.value = data;
   } catch (error) {
-    console.error('Error al obtener las becas:', error);
+    console.error('Error fetching books:', error);
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 
@@ -102,16 +111,17 @@ const deleteBeca = async (id) => {
     await $fetch(`${config.public.backend_url}/becas/delete/${id}`, {
       method: 'DELETE',
       headers: {
-
         'Authorization': token.value
       }
-
     });
-    alert('Beca eliminada exitosamente');
+    toast.success('Beca eliminada exitosamente');
     fetchBecas();
   } catch (error) {
-    console.error(error);
-    alert('Hubo un problema al eliminar la beca');
+    console.error('Error fetching books:', error);
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 

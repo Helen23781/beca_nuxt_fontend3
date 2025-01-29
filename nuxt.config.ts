@@ -15,6 +15,10 @@ export default defineNuxtConfig({
    //   tailwindcss: {},
     //  autoprefixer: {},
    // },
+   build: {
+    transpile: ['vue-toastification']
+  },
+  css: [ 'vue-toastification/dist/index.css'],
   tailwindcss: {
     exposeConfig: true,
     configPath: 'tailwind.config',

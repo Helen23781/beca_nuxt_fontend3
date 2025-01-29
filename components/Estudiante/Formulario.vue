@@ -272,31 +272,8 @@ const cargarCuartos = async () => {
     }
 };
 
-// Función para cargar los cuartos por torre
-const cargarCuartosPorTorre = async (torreId) => {
-    try {
-        const response = await $fetch(`${config.public.backend_url}/cuartos/torre/${torreId}`, {
 
-            headers: {
 
-                'Authorization': token.value
-
-            },
-        }
-        );
-        cuartos.value = response;
-    } catch (error) {
-        console.error('Error al cargar los cuartos por torre:', error);
-        alert('Error al cargar los cuartos por torre');
-    }
-};
-
-// Observa cambios en torreId para cargar cuartos
-watch(torreId, (newTorreId) => {
-    if (newTorreId) {
-        cargarCuartosPorTorre(newTorreId);
-    }
-});
 
 // Función para manejar el cambio de archivo
 const handleFileChange = (event) => {
