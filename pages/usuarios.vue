@@ -43,8 +43,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
 import UsuarioFormulario from '../components/Usuario/Formulario.vue';
 
+const toast = useToast();
 const config = useRuntimeConfig();
 const { token } = useAuth();
 
@@ -73,6 +75,7 @@ const fetchUsuarios = async () => {
         usuarios.value = data;
     } catch (error) {
         console.error('Error al obtener los usuarios:', error);
+        toast.error('Error al obtener los usuarios. Por favor, inténtalo de nuevo.');
     }
 };
 
@@ -84,12 +87,14 @@ const abrirFormulario = (usuario = null) => {
 
 const agregarUsuario = (nuevoUsuario) => {
     usuarios.value.push(nuevoUsuario);
+    toast.success('Usuario creado exitosamente');
 };
 
 const actualizarUsuario = (usuarioActualizado) => {
     const index = usuarios.value.findIndex(usuario => usuario.id === usuarioActualizado.id);
     if (index !== -1) {
         usuarios.value[index] = usuarioActualizado;
+        toast.success('Usuario actualizado exitosamente');
     }
 };
 
@@ -101,11 +106,11 @@ const deleteUsuario = async (id) => {
                 'Authorization': token.value
             }
         });
-        alert('Usuario eliminado exitosamente');
+        toast.success('Usuario eliminado exitosamente');
         fetchUsuarios();
     } catch (error) {
         console.error(error);
-        alert('Hubo un problema al eliminar el usuario');
+        toast.error('Hubo un problema al eliminar el usuario. Por favor, inténtalo de nuevo.');
     }
 };
 

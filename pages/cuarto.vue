@@ -93,6 +93,7 @@ const fetchCuartos = async () => {
     });
   } catch (error) {
     console.error('Error al obtener los cuartos:', error);
+    toast.error('Error al obtener los cuartos');
   }
 };
 
@@ -112,10 +113,10 @@ const deleteCuarto = async (id) => {
       }
     });
 
-    toast.success('Cuarto eliminada exitosamente');
+    toast.success('Cuarto eliminado exitosamente');
     fetchCuartos();
   } catch (error) {
-    console.error('Error al eliminar la cuarto:', error);
+    console.error('Error al eliminar el cuarto:', error);
     // Mostrar mensaje de error
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;

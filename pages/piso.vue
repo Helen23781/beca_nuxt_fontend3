@@ -50,27 +50,20 @@
 import { ref, onMounted, computed } from 'vue';
 import PisoFormulario from '../components/Piso/Formulario.vue';
 import Modal from '../components/Modal.vue';
+import { useToast } from 'vue-toastification';
 
-import { useToast } from 'vue-toastification'
-
-// Agregar el toast
-const toast = useToast()
-
-
+const toast = useToast();
 const config = useRuntimeConfig();
-const { token } = useAuth()
+const { token } = useAuth();
 
-// Configuración de SEO
 useSeoMeta({
   title: 'Administración de pisos universitarios',
   ogTitle: 'Administración de pisos universitarios',
   description: 'Sistema integral para la gestión de pisos y becas en residencias universitarias.',
   ogDescription: 'Sistema integral para la gestión de pisos y becas en residencias universitarias.',
-  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  ogImage: '/images/logo.jpg',
   keywords: 'administración de pisos, residencias universitarias, gestión de becas, control de habitaciones'
 });
-
-
 
 const pisos = ref([]);
 const becas = ref([]);
@@ -78,7 +71,6 @@ const showModal = ref(false);
 const pisoSeleccionado = ref(null);
 const isEditing = ref(false);
 
-// Computed property para pisos con beca asignada
 const pisosConBecaAsignada = computed(() => {
   return pisos.value
     .filter(piso => {
@@ -96,35 +88,27 @@ const pisosConBecaAsignada = computed(() => {
 const fetchBecas = async () => {
   try {
     becas.value = await $fetch(`${config.public.backend_url}/becas`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
   } catch (error) {
     console.error('Error al obtener las becas:', error);
+    toast.error('Error al obtener las becas');
   }
 };
 
 const fetchPisos = async () => {
   try {
     const data = await $fetch(`${config.public.backend_url}/pisos`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
     console.log('Pisos actualizados:', data);
     pisos.value = data;
   } catch (error) {
-    console.error('Error fetching books:', error);
-    // Mostrar mensaje de error
+    console.error('Error al obtener los pisos:', error);
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;
     toast.error(`Error ${errorCode}: ${errorMessage}`);
@@ -151,12 +135,12 @@ const abrirFormulario = (piso = null) => {
 
 const agregarPiso = (nuevoPiso) => {
   pisos.value.push(nuevoPiso);
+  toast.success('Piso creado exitosamente');
   localStorage.removeItem('pisoData');
 };
 
 const actualizarPiso = async (pisoActualizado) => {
   try {
-    // Actualizamos el array local inmediatamente
     const index = pisos.value.findIndex(p => p.id === pisoActualizado.id);
     if (index !== -1) {
       pisos.value[index] = {
@@ -164,12 +148,11 @@ const actualizarPiso = async (pisoActualizado) => {
         becaid: pisoActualizado.becaId
       };
     }
-
-    // Recargamos los datos para asegurar sincronización
     await fetchPisos();
+    toast.success('Piso actualizado exitosamente');
   } catch (error) {
     console.error('Error al actualizar piso:', error);
-    alert('Error al actualizar el piso');
+    toast.error('Error al actualizar el piso');
   }
 };
 
@@ -185,8 +168,7 @@ const deletePiso = async (id) => {
     toast.success('Piso eliminado exitosamente');
     fetchPisos();
   } catch (error) {
-    console.error('Error fetching books:', error);
-    // Mostrar mensaje de error
+    console.error('Error al eliminar el piso:', error);
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;
     toast.error(`Error ${errorCode}: ${errorMessage}`);

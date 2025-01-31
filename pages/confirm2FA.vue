@@ -59,10 +59,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useToast } from 'vue-toastification'
 
 const { token, data } = useAuth()
 const router = useRouter()
+const toast = useToast()
 
 const is2FAEnabled = ref(data.value.twoFactorEnabled)
 const verificationCode = ref('')
@@ -100,11 +101,11 @@ const validateCode = async () => {
             }
         });
         isSuccess.value = true
-        message.value = '¡Verificación 2FA exitosa!'
+        toast.success('¡Verificación 2FA exitosa!')
         router.push("/")
     } catch (error) {
         isSuccess.value = false
-        message.value = 'Código de verificación inválido. Inténtalo de nuevo.'
+        toast.error('Código de verificación inválido. Inténtalo de nuevo.')
     }
     verificationCode.value = ''
 }
@@ -122,11 +123,11 @@ const enableTwoFactor = async () => {
         });
         is2FAEnabled.value = true
         isSuccess.value = true
-        message.value = '¡2FA ha sido habilitado exitosamente!'
+        toast.success('¡2FA ha sido habilitado exitosamente!')
         router.push("/")
     } catch (error) {
         isSuccess.value = false
-        message.value = 'Código de configuración inválido. Inténtalo de nuevo.'
+        toast.error('Código de configuración inválido. Inténtalo de nuevo.')
     }
     setupCode.value = ''
 }
@@ -144,7 +145,7 @@ onMounted(async () => {
             qrCodeUrl.value = response.qrCode;
             secretKey.value = response.secret;
         } catch (error) {
-            message.value = 'Error al cargar el código QR. Inténtalo de nuevo.';
+            toast.error('Error al cargar el código QR. Inténtalo de nuevo.');
         }
     }
 });

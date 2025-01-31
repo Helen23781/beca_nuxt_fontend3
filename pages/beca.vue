@@ -42,25 +42,21 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import BecaFormulario from '../components/Beca/Formulario.vue';
+import { useToast } from 'vue-toastification';
 
-import { useToast } from 'vue-toastification'
+const toast = useToast();
 
-// Agregar el toast
-const toast = useToast()
-
-
-// Configuración de SEO
 useSeoMeta({
   title: 'Gestión de Becas - UNISS',
   ogTitle: 'Gestión de Becas - UNISS',
   description: 'Administra y visualiza la lista de becas disponibles en las residencias universitarias de UNISS.',
   ogDescription: 'Administra y visualiza la lista de becas disponibles en las residencias universitarias de UNISS.',
-  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  ogImage: '/images/logo.jpg',
   keywords: 'gestión de becas, UNISS, residencias universitarias, administración de becas'
 });
 
 const config = useRuntimeConfig();
-const { token } = useAuth()
+const { token } = useAuth();
 
 const becas = ref([]);
 const showModal = ref(false);
@@ -70,18 +66,13 @@ const isEditing = ref(false);
 const fetchBecas = async () => {
   try {
     const data = await $fetch(`${config.public.backend_url}/becas`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
     becas.value = data;
   } catch (error) {
     console.error('Error fetching books:', error);
-    // Mostrar mensaje de error
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;
     toast.error(`Error ${errorCode}: ${errorMessage}`);
@@ -118,7 +109,6 @@ const deleteBeca = async (id) => {
     fetchBecas();
   } catch (error) {
     console.error('Error fetching books:', error);
-    // Mostrar mensaje de error
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;
     toast.error(`Error ${errorCode}: ${errorMessage}`);

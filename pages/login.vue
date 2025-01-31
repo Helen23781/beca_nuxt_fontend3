@@ -24,11 +24,14 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+import { useToast } from 'vue-toastification';
 
 const { signIn } = useAuth()
 
 const nombre_usuario = ref("");
 const contrasena = ref("");
+
+const toast = useToast();
 
 definePageMeta({
   layout: "login",
@@ -54,6 +57,8 @@ const handleSignIn = async () => {
       { callbackUrl: '/confirm2FA', redirect: true });
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
+    // Mostrar mensaje de error con toast
+    toast.error("Credenciales inválidas. Por favor, inténtalo de nuevo.");
   }
 };
 </script>

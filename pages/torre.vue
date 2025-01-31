@@ -60,7 +60,7 @@ import Modal from '../components/Modal.vue';
 import { useToast } from 'vue-toastification';
 
 const config = useRuntimeConfig();
-const { token } = useAuth()
+const { token } = useAuth();
 
 const torres = ref([]);
 const showModal = ref(false);
@@ -68,16 +68,14 @@ const torreSeleccionada = ref(null);
 const isEditing = ref(false);
 const isShowing = ref(false);
 
-// Agregar el toast
 const toast = useToast();
 
-// Configuración de SEO
 useSeoMeta({
   title: 'Gestión de torres universitarias',
   ogTitle: 'Gestión de torres universitarias',
   description: 'Sistema integral para la gestión de torres y pisos en residencias universitarias.',
   ogDescription: 'Sistema integral para la gestión de torres y pisos en residencias universitarias.',
-  ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
+  ogImage: '/images/logo.jpg',
   keywords: 'gestión de torres, residencias universitarias, administración de pisos, control de habitaciones'
 });
 
@@ -90,6 +88,9 @@ const fetchTorres = async () => {
     });
   } catch (error) {
     console.error('Error al obtener las torres:', error);
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 
@@ -125,7 +126,6 @@ const deleteTorre = async (id) => {
     fetchTorres();
   } catch (error) {
     console.error('Error al eliminar la torre:', error);
-    // Mostrar mensaje de error
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;
     toast.error(`Error ${errorCode}: ${errorMessage}`);

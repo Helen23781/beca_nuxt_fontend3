@@ -18,7 +18,12 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import { useAuth } from 'vue-auth';
+import { useToast } from 'vue-toastification';
+
 const { data, token } = useAuth();
+const toast = useToast();
 
 const userData = ref({
     nombre: data.value.nombre_usuario,
@@ -30,7 +35,7 @@ const confirmPassword = ref('');
 
 const actualizarPerfil = async () => {
     if (newPassword.value !== confirmPassword.value) {
-        console.error('Las contraseñas no coinciden');
+        toast.error('Las contraseñas no coinciden');
         return;
     }
 
@@ -45,16 +50,15 @@ const actualizarPerfil = async () => {
     try {
         const response = await $fetch(`${config.public.backend_url}/mi-cuenta`, {
             method: 'PUT',
-
             headers: {
                 'Authorization': token.value
             },
-
             body: updateData,
         });
-        console.log('Perfil actualizado exitosamente:', response);
+        toast.success('Perfil actualizado exitosamente');
     } catch (error) {
         console.error('Error al actualizar el perfil:', error);
+        toast.error('Error al actualizar el perfil');
     }
 };
 </script>

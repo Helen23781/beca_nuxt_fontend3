@@ -55,6 +55,9 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import { useToast } from 'vue-toastification';
+
+const toast = useToast();
 const { token } = useAuth()
 
 const props = defineProps({
@@ -87,29 +90,25 @@ const torresFiltradas = computed(() => torres.value.filter(torre => torre.pisoId
 const cargarDatos = async (url, refData) => {
     try {
         const response = await $fetch(url, {
-
             headers: {
-
                 'Authorization': token.value
-
             },
-        }
-        );
+        });
         refData.value = response;
     } catch (error) {
         console.error(`Error al cargar datos de ${url}:`, error);
-        alert(`Error al cargar datos de ${url}`);
+        toast.error(`Error al cargar datos de ${url}`);
     }
 };
 
 // Función para validar y enviar el formulario
 const validarYEnviar = () => {
     if (!validarNumeroCuarto(numeroCuarto.value)) {
-        alert('El número de cuarto debe ser un número entero o decimal.');
+        toast.error('El número de cuarto debe ser un número entero o decimal.');
         return;
     }
     if (!validarCapacidadMaxima(capacidadMaxima.value)) {
-        alert('La capacidad máxima debe ser un número entero.');
+        toast.error('La capacidad máxima debe ser un número entero.');
         return;
     }
     enviarFormulario();
@@ -118,7 +117,6 @@ const validarYEnviar = () => {
 // Guardar en localStorage solo si no se está editando
 watch([numeroCuarto, capacidadMaxima, becaId, pisoId, torreid], ([newNumeroCuarto, newCapacidadMaxima, newBecaId, newPisoId, newTorreid]) => {
     if (!props.isEditing) {
-        console.log("asdasd")
         localStorage.setItem('cuartoData', JSON.stringify({
             numero_cuarto: newNumeroCuarto,
             capacidad_maxima: newCapacidadMaxima,
@@ -131,13 +129,11 @@ watch([numeroCuarto, capacidadMaxima, becaId, pisoId, torreid], ([newNumeroCuart
 
 // Cargar datos de localStorage al montar el componente solo si no se está editando
 onMounted(() => {
-    console.log(props.isEditing);
     if (!props.isEditing) {
         const storedData = localStorage.getItem('cuartoData');
         if (storedData) {
             try {
                 const parsedData = JSON.parse(storedData);
-                console.log(parsedData);
                 numeroCuarto.value = parsedData.numero_cuarto || '';
                 capacidadMaxima.value = parsedData.capacidad_maxima || '';
                 becaId.value = parsedData.becaId || '';
@@ -146,8 +142,6 @@ onMounted(() => {
             } catch (error) {
                 console.error('Error al parsear los datos de localStorage:', error);
             }
-        } else {
-            console.log('No hay datos almacenados en localStorage bajo la clave "cuartoData".');
         }
     }
 });
@@ -171,13 +165,10 @@ const enviarFormulario = async () => {
         becaId: becaId.value
     };
 
-    // Verifica que todos los campos requeridos estén presentes y sean válidos
     if (!formData.numero_cuarto || !formData.capacidad_maxima || !formData.torreid || !formData.pisoId || !formData.becaId) {
-        alert('Por favor, complete todos los campos requeridos.');
+        toast.error('Por favor, complete todos los campos requeridos.');
         return;
     }
-
-    console.log('Datos enviados:', formData);
 
     try {
         const response = await $fetch(url, {
@@ -193,35 +184,27 @@ const enviarFormulario = async () => {
 
         if (props.isEditing) {
             emit('cuartoActualizado', data);
+            toast.success('Cuarto actualizado exitosamente');
         } else {
             emit('cuartoCreado', data);
             localStorage.removeItem('cuartoData');
+            toast.success('Cuarto creado exitosamente');
         }
 
         emit('cerrarFormulario');
 
-        setTimeout(() => {
-            alert(props.isEditing ? 'Cuarto actualizado exitosamente' : 'Cuarto creado exitosamente');
-        }, 100);
-
     } catch (error) {
         console.error('Error:', error);
-        alert(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+        toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
     }
 };
 
 onMounted(async () => {
     await cargarDatos(`${config.public.backend_url}/becas`, becas);
-    console.log('Becas cargadas:', becas.value);
-
     await cargarDatos(`${config.public.backend_url}/pisos`, pisos);
-    console.log('Pisos cargados:', pisos.value);
-
     await cargarDatos(`${config.public.backend_url}/torres`, torres);
-    console.log('Torres cargadas:', torres.value);
 
     if (props.isEditing || props.isShowing) {
-        console.log('Datos iniciales:', props.initialData);
         becaId.value = props.initialData.torre.piso.beca.id;
         pisoId.value = props.initialData.torre.piso.id;
         torreid.value = props.initialData.torre.id;

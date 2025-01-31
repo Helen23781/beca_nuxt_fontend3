@@ -95,7 +95,10 @@
 </template>
 
 <script setup>
-
+import { ref, onMounted } from 'vue';
+import EstudianteFormulario from '../components/Estudiante/Formulario.vue';
+import Modal from '../components/Modal.vue';
+import { useToast } from 'vue-toastification';
 
 // Configuración de SEO
 useSeoMeta({
@@ -108,7 +111,7 @@ useSeoMeta({
 });
 
 const config = useRuntimeConfig();
-const { token } = useAuth()
+const { token } = useAuth();
 
 const estudiantes = ref([]);
 const showModal = ref(false);
@@ -117,6 +120,9 @@ const isEditing = ref(false);
 const isReadOnly = ref(false);
 const fotoGrande = ref(null);
 
+// Agregar el toast
+const toast = useToast();
+
 const fetchEstudiantes = async () => {
   try {
     estudiantes.value = await $fetch(`${config.public.backend_url}/estudiantes`, {
@@ -124,9 +130,10 @@ const fetchEstudiantes = async () => {
         'Authorization': token.value
       },
     });
-    console.log(estudiantes)
+    console.log(estudiantes);
   } catch (error) {
     console.error('Error al obtener los estudiantes:', error);
+    toast.error('Error al obtener los estudiantes');
   }
 };
 
@@ -150,11 +157,11 @@ const deleteEstudiante = async (id) => {
       }
     });
 
-    alert('Estudiante eliminado exitosamente');
+    toast.success('Estudiante eliminado exitosamente');
     await fetchEstudiantes();
   } catch (error) {
     console.error('Error al eliminar el estudiante:', error);
-    alert('Hubo un problema al eliminar el estudiante');
+    toast.error('Hubo un problema al eliminar el estudiante');
   }
 };
 

@@ -45,8 +45,10 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-const { token } = useAuth()
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
+const { token } = useAuth();
 
 const props = defineProps({
   initialData: Object,
@@ -68,18 +70,14 @@ const jefeFormatoError = ref(false);
 const cargarBecas = async () => {
   try {
     const response = await $fetch(`${config.public.backend_url}/becas`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
     becas.value = response;
   } catch (error) {
     console.error('Error al cargar las becas:', error);
-    alert('Error al cargar las becas');
+    toast.error('Error al cargar las becas');
   }
 };
 
@@ -124,7 +122,6 @@ const enviarFormulario = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token.value
-
       },
       body: JSON.stringify(formData)
     });
@@ -132,7 +129,6 @@ const enviarFormulario = async () => {
     const data = response;
     const becaActualizada = becas.value.find(b => b.id === parseInt(becaId.value));
 
-    // Primero emitimos los eventos de actualización
     if (props.isEditing) {
       emit('pisoActualizado', {
         id: props.initialData.id,
@@ -141,31 +137,22 @@ const enviarFormulario = async () => {
         becaId: parseInt(becaId.value),
         beca: becaActualizada
       });
+      toast.success('Piso actualizado exitosamente');
     } else {
       emit('pisoCreado', {
         ...data,
         becaId: parseInt(becaId.value),
         beca: becaActualizada
       });
+      toast.success('Piso creado exitosamente');
     }
 
-    // Cerramos el formulario automáticamente
     emit('cerrarFormulario');
-
-    // Mostramos el mensaje después de cerrar
-    setTimeout(() => {
-      alert(props.isEditing ? 'Piso actualizado exitosamente' : 'Piso creado exitosamente');
-    }, 100);
-
-    // Guardar datos en localStorage al crear un nuevo piso
-    if (!props.isEditing) {
-      localStorage.setItem('pisoData', JSON.stringify(formData));
-    }
-    localStorage.removeItem('pisoData'); // Limpiar localStorage después de la creación
+    localStorage.removeItem('pisoData');
 
   } catch (error) {
     console.error('Error:', error);
-    alert(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+    toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
   }
 };
 
@@ -182,10 +169,6 @@ watch(() => props.initialData, (newData) => {
     numeroPiso.value = newData.numero_piso?.toString() || '';
     jefePiso.value = newData.jefe_piso || '';
     becaId.value = newData.becaid?.toString() || newData.becaId?.toString() || '';
-
-    // Log para debug
-    console.log('Beca ID seleccionada:', becaId.value);
-    console.log('Becas disponibles:', becas.value);
   }
   numeroError.value = false;
   jefeError.value = false;
@@ -199,7 +182,6 @@ onMounted(async () => {
     console.log('Datos iniciales:', props.initialData);
   }
 
-  // Cargar datos desde localStorage al montar
   const savedData = JSON.parse(localStorage.getItem('pisoData'));
   if (savedData) {
     numeroPiso.value = savedData.numero_piso || '';

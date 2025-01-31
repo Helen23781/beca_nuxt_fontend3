@@ -117,9 +117,11 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import { useToast } from 'vue-toastification';
 import { useRuntimeConfig } from '#app';
 const { token } = useAuth()
 
+const toast = useToast();
 
 const props = defineProps({
     initialData: Object,
@@ -183,7 +185,6 @@ const torresFiltradas = computed(() => {
     return torres.value.filter(torre => torre.pisoId === pisoId.value);
 });
 
-
 // Computed para obtener la URL de la foto desde el backend
 const fotoUrl = computed(() => {
     return foto.value && !foto.value.startsWith('data:')
@@ -191,24 +192,18 @@ const fotoUrl = computed(() => {
         : foto.value;
 });
 
-
 // Función para cargar las becas
 const cargarBecas = async () => {
     try {
         const response = await $fetch(`${config.public.backend_url}/becas`, {
-
             headers: {
-
                 'Authorization': token.value
-
             },
-        }
-        );
+        });
         becas.value = response;
-        console.log(response)
     } catch (error) {
         console.error('Error al cargar las becas:', error);
-        alert('Error al cargar las becas');
+        toast.error('Error al cargar las becas');
     }
 };
 
@@ -216,19 +211,14 @@ const cargarBecas = async () => {
 const cargarPisos = async () => {
     try {
         const response = await $fetch(`${config.public.backend_url}/pisos`, {
-
             headers: {
-
                 'Authorization': token.value
-
             },
-        }
-        );
+        });
         pisos.value = response;
-        console.log(response)
     } catch (error) {
         console.error('Error al cargar los pisos:', error);
-        alert('Error al cargar los pisos');
+        toast.error('Error al cargar los pisos');
     }
 };
 
@@ -236,44 +226,31 @@ const cargarPisos = async () => {
 const cargarTorres = async () => {
     try {
         const response = await $fetch(`${config.public.backend_url}/torres`, {
-
             headers: {
-
                 'Authorization': token.value
-
             },
-        }
-        );
+        });
         torres.value = response;
     } catch (error) {
         console.error('Error al cargar las torres:', error);
-        alert('Error al cargar las torres');
+        toast.error('Error al cargar las torres');
     }
 };
 
 // Función para cargar los cuartos
 const cargarCuartos = async () => {
     try {
-
         const response = await $fetch(`${config.public.backend_url}/cuartos`, {
-
             headers: {
-
                 'Authorization': token.value
-
             },
-        }
-        );
+        });
         cuartos.value = response;
-        console.log(response)
     } catch (error) {
         console.error('Error al cargar los cuartos:', error);
-        alert('Error al cargar los cuartos');
+        toast.error('Error al cargar los cuartos');
     }
 };
-
-
-
 
 // Función para manejar el cambio de archivo
 const handleFileChange = (event) => {
@@ -290,19 +267,19 @@ const handleFileChange = (event) => {
 // Función para validar y enviar el formulario
 const validarYEnviar = () => {
     if (!validarNombreApellido(nombreEstudiante.value)) {
-        alert('El nombre debe contener solo letras y comenzar con mayúscula.');
+        toast.error('El nombre debe contener solo letras y comenzar con mayúscula.');
         return;
     }
     if (!validarNombreApellido(apellidoEstudiante.value)) {
-        alert('El apellido debe contener solo letras y comenzar con mayúscula.');
+        toast.error('El apellido debe contener solo letras y comenzar con mayúscula.');
         return;
     }
     if (!validarAnioAcademico(anioAcademico.value)) {
-        alert('El año académico debe ser un número entre 1 y 5.');
+        toast.error('El año académico debe ser un número entre 1 y 5.');
         return;
     }
     if (!validarEdad(edad.value)) {
-        alert('La edad debe ser un número entero menor que 100.');
+        toast.error('La edad debe ser un número entero menor que 100.');
         return;
     }
     enviarFormulario();
@@ -326,6 +303,9 @@ const enviarFormulario = async () => {
     formData.append('edad', edad.value);
     formData.append('carrera', carrera.value);
     formData.append('facultad', facultad.value);
+    formData.append('becaId', becaId.value);
+    formData.append('pisoId', pisoId.value);
+    formData.append('torreId', torreId.value);
     formData.append('cuartoId', cuartoId.value);
 
     if (foto.value) {
@@ -334,8 +314,6 @@ const enviarFormulario = async () => {
             formData.append('foto', fileInput.files[0]);
         }
     }
-
-    console.log('Datos enviados:', formData);
 
     try {
         const response = await $fetch(url, {
@@ -350,20 +328,18 @@ const enviarFormulario = async () => {
 
         if (props.isEditing) {
             emit('estudianteActualizado', data);
+            toast.success('Estudiante actualizado exitosamente');
         } else {
             emit('estudianteCreado', data);
             localStorage.removeItem('datosFormularioEstudiante');
+            toast.success('Estudiante creado exitosamente');
         }
 
         emit('cerrarFormulario');
 
-        setTimeout(() => {
-            alert(props.isEditing ? 'Estudiante actualizado exitosamente' : 'Estudiante creado exitosamente');
-        }, 100);
-
     } catch (error) {
         console.error('Error:', error);
-        alert(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+        toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
     }
 };
 
@@ -426,6 +402,5 @@ onMounted(async () => {
         cuartoId.value = props.initialData.cuarto.id;
     }
 });
-
 
 </script>

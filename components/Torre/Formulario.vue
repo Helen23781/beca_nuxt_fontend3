@@ -50,15 +50,16 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
-const { token } = useAuth()
+import { useToast } from 'vue-toastification';
 
+const toast = useToast();
+const { token } = useAuth();
 
 const props = defineProps({
   initialData: Object,
   isEditing: Boolean,
   isShowing: Boolean
 });
-
 
 const emit = defineEmits(['torreCreada', 'torreActualizada', 'cerrarFormulario']);
 
@@ -82,18 +83,14 @@ const pisosFiltrados = computed(() => {
 const cargarBecas = async () => {
   try {
     const response = await $fetch(`${config.public.backend_url}/becas`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
     becas.value = response;
   } catch (error) {
     console.error('Error al cargar las becas:', error);
-    alert('Error al cargar las becas');
+    toast.error('Error al cargar las becas');
   }
 };
 
@@ -101,18 +98,14 @@ const cargarBecas = async () => {
 const cargarPisos = async () => {
   try {
     const response = await $fetch(`${config.public.backend_url}/pisos`, {
-
       headers: {
-
         'Authorization': token.value
-
       },
-    }
-    );
+    });
     pisos.value = response;
   } catch (error) {
     console.error('Error al cargar los pisos:', error);
-    alert('Error al cargar los pisos');
+    toast.error('Error al cargar los pisos');
   }
 };
 
@@ -183,7 +176,6 @@ const enviarFormulario = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token.value
-
       },
       body: JSON.stringify(formData)
     });
@@ -192,20 +184,18 @@ const enviarFormulario = async () => {
 
     if (props.isEditing) {
       emit('torreActualizada', data);
+      toast.success('Torre actualizada exitosamente');
     } else {
       emit('torreCreada', data);
       localStorage.removeItem('torreData'); // Limpiar localStorage después de la creación
+      toast.success('Torre creada exitosamente');
     }
 
     emit('cerrarFormulario');
 
-    setTimeout(() => {
-      alert(props.isEditing ? 'Torre actualizada exitosamente' : 'Torre creada exitosamente');
-    }, 100);
-
   } catch (error) {
     console.error('Error:', error);
-    alert(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+    toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
   }
 };
 
