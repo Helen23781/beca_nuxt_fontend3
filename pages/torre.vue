@@ -57,6 +57,7 @@
 import { ref, onMounted } from 'vue';
 import TorreFormulario from '../components/Torre/Formulario.vue';
 import Modal from '../components/Modal.vue';
+import { useToast } from 'vue-toastification';
 
 const config = useRuntimeConfig();
 const { token } = useAuth()
@@ -66,6 +67,9 @@ const showModal = ref(false);
 const torreSeleccionada = ref(null);
 const isEditing = ref(false);
 const isShowing = ref(false);
+
+// Agregar el toast
+const toast = useToast();
 
 // Configuración de SEO
 useSeoMeta({
@@ -109,11 +113,6 @@ const actualizarTorre = (torreActualizada) => {
 };
 
 const deleteTorre = async (id) => {
-  const confirmacion = confirm('¿Está seguro de que desea eliminar esta torre?');
-  if (!confirmacion) {
-    return;
-  }
-
   try {
     await $fetch(`${config.public.backend_url}/torres/delete/${id}`, {
       method: 'DELETE',
@@ -122,11 +121,14 @@ const deleteTorre = async (id) => {
       }
     });
 
-    alert('Torre eliminada exitosamente');
-    await fetchTorres();
+    toast.success('Torre eliminada exitosamente');
+    fetchTorres();
   } catch (error) {
     console.error('Error al eliminar la torre:', error);
-    alert('Hubo un problema al eliminar la torre');
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 
