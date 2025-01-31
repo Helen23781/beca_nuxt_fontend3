@@ -60,7 +60,7 @@
 import { ref, onMounted } from 'vue';
 import CuartoFormulario from '../components/Cuarto/Formulario.vue';
 import Modal from '../components/Modal.vue';
-
+import { useToast } from 'vue-toastification';
 
 // Configuración de SEO
 useSeoMeta({
@@ -80,6 +80,9 @@ const showModal = ref(false);
 const cuartoSeleccionado = ref(null);
 const isEditing = ref(false);
 const isShowing = ref(false);
+
+// Agregar el toast
+const toast = useToast();
 
 const fetchCuartos = async () => {
   try {
@@ -101,11 +104,6 @@ const abrirFormulario = (cuarto = null, mostrar = false) => {
 };
 
 const deleteCuarto = async (id) => {
-  const confirmacion = confirm('¿Está seguro de que desea eliminar este cuarto?');
-  if (!confirmacion) {
-    return;
-  }
-
   try {
     await $fetch(`${config.public.backend_url}/cuartos/delete/${id}`, {
       method: 'DELETE',
@@ -114,11 +112,14 @@ const deleteCuarto = async (id) => {
       }
     });
 
-    alert('Cuarto eliminado exitosamente');
-    await fetchCuartos();
+    toast.success('Cuarto eliminada exitosamente');
+    fetchCuartos();
   } catch (error) {
-    console.error('Error al eliminar el cuarto:', error);
-    alert('Hubo un problema al eliminar el cuarto');
+    console.error('Error al eliminar la cuarto:', error);
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 
