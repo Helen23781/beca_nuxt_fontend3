@@ -51,6 +51,12 @@ import { ref, onMounted, computed } from 'vue';
 import PisoFormulario from '../components/Piso/Formulario.vue';
 import Modal from '../components/Modal.vue';
 
+import { useToast } from 'vue-toastification'
+
+// Agregar el toast
+const toast = useToast()
+
+
 const config = useRuntimeConfig();
 const { token } = useAuth()
 
@@ -63,6 +69,8 @@ useSeoMeta({
   ogImage: '/images/logo.jpg', // Puedes agregar la URL de una imagen aquí
   keywords: 'administración de pisos, residencias universitarias, gestión de becas, control de habitaciones'
 });
+
+
 
 const pisos = ref([]);
 const becas = ref([]);
@@ -115,8 +123,11 @@ const fetchPisos = async () => {
     console.log('Pisos actualizados:', data);
     pisos.value = data;
   } catch (error) {
-    console.error('Error al obtener los pisos:', error);
-    alert('Error al cargar los pisos');
+    console.error('Error fetching books:', error);
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 
@@ -163,26 +174,22 @@ const actualizarPiso = async (pisoActualizado) => {
 };
 
 const deletePiso = async (id) => {
-  const confirmacion = confirm('¿Está seguro de que desea eliminar este piso?');
-  if (!confirmacion) {
-    return; // Si el usuario cancela, no hacemos nada
-  }
-
   try {
     await $fetch(`${config.public.backend_url}/pisos/delete/${id}`, {
       method: 'DELETE',
       headers: {
-
         'Authorization': token.value
       }
-
     });
 
-    alert('Piso eliminado exitosamente');
-    await fetchPisos(); // Recargar los datos después de eliminar
+    toast.success('Piso eliminado exitosamente');
+    fetchPisos();
   } catch (error) {
-    console.error('Error al eliminar el piso:', error);
-    alert('Hubo un problema al eliminar el piso');
+    console.error('Error fetching books:', error);
+    // Mostrar mensaje de error
+    const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
+    const errorCode = error.response?.status || 500;
+    toast.error(`Error ${errorCode}: ${errorMessage}`);
   }
 };
 
