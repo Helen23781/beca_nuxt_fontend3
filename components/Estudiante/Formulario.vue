@@ -1,9 +1,16 @@
 <template>
     <form @submit.prevent="validarYEnviar" class="max-w-lg mx-auto bg-white p-4 rounded-lg shadow-md max-h-screengap-4">
         <div class="flex justify-center mb-4">
-            <NuxtImg v-if="foto" :src="fotoUrl" alt="Vista previa de la foto"
-                class="rounded-full h-12 w-12 object-cover" />
+            <NuxtImg :src="fotoUrl" alt="Vista previa de la foto"
+                class="rounded-full h-24 w-24 object-cover cursor-pointer" @click="mostrarFotoGrande" />
         </div>
+
+        <!-- Modal para mostrar la foto en grande -->
+        <div v-if="fotoGrande" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            @click="cerrarFotoGrande">
+            <img :src="fotoGrande" alt="Foto del estudiante" class="max-w-full max-h-full" />
+        </div>
+
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="nombreEstudiante" class="block text-gray-700 font-bold mb-1">Nombre:</label>
@@ -148,6 +155,8 @@ const pisos = ref([]);
 const torres = ref([]);
 const cuartos = ref([]);
 
+const fotoGrande = ref(null);
+
 // Opciones de carreras por facultad
 const opcionesCarreras = {
     "Ciencias Pedagogicas": [
@@ -189,7 +198,7 @@ const torresFiltradas = computed(() => {
 const fotoUrl = computed(() => {
     return foto.value && !foto.value.startsWith('data:')
         ? `${config.public.backend_url}/estudiantes/foto/${foto.value}`
-        : foto.value;
+        : '/images/avatar.jpg';
 });
 
 // Función para cargar las becas
@@ -380,16 +389,12 @@ const cargarDesdeLocalStorage = () => {
     }
 };
 
-// Observa cambios en los campos del formulario para guardar en localStorage solo si no está editando
-if (!props.isEditing) {
-    watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreId, cuartoId, foto], guardarEnLocalStorage);
-}
+// Observa cambios en los campos del formulario para guardar en localStorage
+watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreId, cuartoId, foto], guardarEnLocalStorage);
 
-// Cargar datos desde localStorage al montar el componente solo si no está editando
+// Cargar datos desde localStorage al montar el componente
 onMounted(async () => {
-    if (!props.isEditing) {
-        cargarDesdeLocalStorage();
-    }
+    cargarDesdeLocalStorage();
     await cargarBecas();
     await cargarPisos();
     await cargarTorres();
@@ -402,5 +407,15 @@ onMounted(async () => {
         cuartoId.value = props.initialData.cuarto.id;
     }
 });
+
+const mostrarFotoGrande = () => {
+    if (foto.value) {
+        fotoGrande.value = fotoUrl.value;
+    }
+};
+
+const cerrarFotoGrande = () => {
+    fotoGrande.value = null;
+};
 
 </script>

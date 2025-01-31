@@ -104,6 +104,7 @@ const abrirFormulario = (torre = null, mostrar = false) => {
 const agregarTorre = (nuevaTorre) => {
   torres.value.push(nuevaTorre);
   localStorage.removeItem('torreData');
+  fetchTorres();
 };
 
 const actualizarTorre = (torreActualizada) => {
@@ -111,6 +112,7 @@ const actualizarTorre = (torreActualizada) => {
   if (index !== -1) {
     torres.value[index] = torreActualizada;
   }
+  fetchTorres();
 };
 
 const deleteTorre = async (id) => {
