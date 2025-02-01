@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();

@@ -81,8 +81,8 @@
                 </select>
             </div>
             <div>
-                <label for="torreId" class="block text-gray-700 font-bold mb-1">Torre:</label>
-                <select id="torreId" v-model="torreId" required
+                <label for="torreid" class="block text-gray-700 font-bold mb-1">Torre:</label>
+                <select id="torreid" v-model="torreid" required
                     class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     :disabled="isReadOnly">
                     <option value="">Seleccione una torre</option>
@@ -110,7 +110,7 @@
             </div>
         </div>
         <div class="flex justify-end space-x-2 mt-4">
-            <button type="button" @click="$emit('cerrarFormulario')"
+            <button type="button" @click="cancelarFormulario"
                 class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Cancelar
             </button>
@@ -136,8 +136,6 @@ const props = defineProps({
     isReadOnly: Boolean
 });
 
-const emit = defineEmits(['estudianteCreado', 'estudianteActualizado', 'cerrarFormulario']);
-
 const config = useRuntimeConfig();
 const nombreEstudiante = ref(props.initialData?.nombre_estudiante || '');
 const apellidoEstudiante = ref(props.initialData?.apellido_estudiante || '');
@@ -147,7 +145,7 @@ const carrera = ref(props.initialData?.carrera || '');
 const facultad = ref(props.initialData?.facultad || '');
 const becaId = ref(props.initialData?.becaId || '');
 const pisoId = ref(props.initialData?.pisoId || '');
-const torreId = ref(props.initialData?.torreId || '');
+const torreid = ref(props.initialData?.torreid || '');
 const cuartoId = ref(props.initialData?.cuartoId || '');
 const foto = ref(props.initialData?.foto || '');
 const becas = ref([]);
@@ -314,7 +312,7 @@ const enviarFormulario = async () => {
     formData.append('facultad', facultad.value);
     formData.append('becaId', becaId.value);
     formData.append('pisoId', pisoId.value);
-    formData.append('torreId', torreId.value);
+    formData.append('torreid', torreid.value);
     formData.append('cuartoId', cuartoId.value);
 
     if (foto.value) {
@@ -352,70 +350,54 @@ const enviarFormulario = async () => {
     }
 };
 
-// Función para guardar datos en localStorage
-const guardarEnLocalStorage = () => {
-    const datosFormulario = {
-        nombreEstudiante: nombreEstudiante.value,
-        apellidoEstudiante: apellidoEstudiante.value,
-        anioAcademico: anioAcademico.value,
-        edad: edad.value,
-        carrera: carrera.value,
-        facultad: facultad.value,
-        becaId: becaId.value,
-        pisoId: pisoId.value,
-        torreId: torreId.value,
-        cuartoId: cuartoId.value,
-        foto: foto.value
-    };
-    localStorage.setItem('datosFormularioEstudiante', JSON.stringify(datosFormulario));
-};
-
-// Función para cargar datos desde localStorage
-const cargarDesdeLocalStorage = () => {
-    const datosGuardados = localStorage.getItem('datosFormularioEstudiante');
-    if (datosGuardados) {
-        const datos = JSON.parse(datosGuardados);
-        nombreEstudiante.value = datos.nombreEstudiante || '';
-        apellidoEstudiante.value = datos.apellidoEstudiante || '';
-        anioAcademico.value = datos.anioAcademico || '';
-        edad.value = datos.edad || '';
-        carrera.value = datos.carrera || '';
-        facultad.value = datos.facultad || '';
-        becaId.value = datos.becaId || '';
-        pisoId.value = datos.pisoId || '';
-        torreId.value = datos.torreId || '';
-        cuartoId.value = datos.cuartoId || '';
-        foto.value = datos.foto || '';
-    }
-};
-
-// Observa cambios en los campos del formulario para guardar en localStorage
-watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreId, cuartoId, foto], guardarEnLocalStorage);
-
-// Cargar datos desde localStorage al montar el componente
-onMounted(async () => {
-    cargarDesdeLocalStorage();
-    await cargarBecas();
-    await cargarPisos();
-    await cargarTorres();
-    await cargarCuartos();
-    if (props.isEditing || props.isReadOnly) {
-        console.log(props.initialData);
-        becaId.value = props.initialData.cuarto.torre.piso.beca.id;
-        pisoId.value = props.initialData.cuarto.torre.piso.id;
-        torreId.value = props.initialData.cuarto.torre.id;
-        cuartoId.value = props.initialData.cuarto.id;
+// Guardar en localStorage cada vez que los campos cambien
+watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreid, cuartoId, foto], () => {
+    if (!props.isEditing) {
+        localStorage.setItem('datosFormularioEstudiante', JSON.stringify({
+            nombre_estudiante: nombreEstudiante.value,
+            apellido_estudiante: apellidoEstudiante.value,
+            anio_academico: anioAcademico.value,
+            edad: edad.value,
+            carrera: carrera.value,
+            facultad: facultad.value,
+            becaId: becaId.value,
+            pisoId: pisoId.value,
+            torreid: torreid.value,
+            cuartoId: cuartoId.value,
+            foto: foto.value
+        }));
     }
 });
 
-const mostrarFotoGrande = () => {
-    if (foto.value) {
-        fotoGrande.value = fotoUrl.value;
+// Cargar datos de localStorage solo si no está editando
+if (!props.isEditing) {
+    const storedData = JSON.parse(localStorage.getItem('datosFormularioEstudiante'));
+    if (storedData) {
+        nombreEstudiante.value = storedData.nombre_estudiante || '';
+        apellidoEstudiante.value = storedData.apellido_estudiante || '';
+        anioAcademico.value = storedData.anio_academico || '';
+        edad.value = storedData.edad || '';
+        carrera.value = storedData.carrera || '';
+        facultad.value = storedData.facultad || '';
+        becaId.value = storedData.becaId || '';
+        pisoId.value = storedData.pisoId || '';
+        torreid.value = storedData.torreid || '';
+        cuartoId.value = storedData.cuartoId || '';
+        foto.value = storedData.foto || '';
     }
+}
+
+const cancelarFormulario = () => {
+    localStorage.removeItem('datosFormularioEstudiante');
+    emit('cerrarFormulario');
 };
 
-const cerrarFotoGrande = () => {
-    fotoGrande.value = null;
-};
+onMounted(async () => {
+    await cargarBecas();
+    await cargarCuartos();
+    await cargarTorres();
+    await cargarPisos();
+    // Otras llamadas a funciones, como fetchEstudiantes
+});
 
 </script>

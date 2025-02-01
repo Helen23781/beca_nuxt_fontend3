@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import BecaFormulario from '../components/Beca/Formulario.vue';
+
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();

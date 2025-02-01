@@ -11,10 +11,7 @@
         </svg>
         Insertar Estudiante
       </button>
-      <button @click="insercionAutomatica()"
-        class="bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-3 px-6 ml-4 rounded-lg shadow-md transition-all duration-300">
-        Inserción Automática
-      </button>
+
     </div>
 
     <!-- Tabla de estudiantes -->
@@ -96,7 +93,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import EstudianteFormulario from '../components/Estudiante/Formulario.vue';
+
 import Modal from '../components/Modal.vue';
 import { useToast } from 'vue-toastification';
 

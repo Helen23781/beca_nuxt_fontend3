@@ -55,7 +55,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import TorreFormulario from '../components/Torre/Formulario.vue';
+
 import Modal from '../components/Modal.vue';
 import { useToast } from 'vue-toastification';
 

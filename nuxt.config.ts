@@ -123,4 +123,7 @@ export default defineNuxtConfig({
       name: "Residencia Universitaria UNISS",
     },
   },
+  gtm: {
+    id: process.env.id_gtm || 'GTM-TRLJTCBH'
+  },
 })

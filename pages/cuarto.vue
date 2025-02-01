@@ -58,7 +58,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import CuartoFormulario from '../components/Cuarto/Formulario.vue';
+
 import Modal from '../components/Modal.vue';
 import { useToast } from 'vue-toastification';
 
