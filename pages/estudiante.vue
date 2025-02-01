@@ -11,6 +11,10 @@
         </svg>
         Insertar Estudiante
       </button>
+      <button @click="insercionAutomatica()"
+        class="bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-3 px-6 ml-4 rounded-lg shadow-md transition-all duration-300">
+        Inserción Automática
+      </button>
     </div>
 
     <!-- Tabla de estudiantes -->
@@ -87,10 +91,6 @@
       @click="cerrarFoto">
       <img :src="fotoGrande" alt="Foto del estudiante" class="max-w-full max-h-full" />
     </div>
-
-    <!-- Modal o componente para mostrar los detalles del estudiante -->
-    <Formulario v-if="estudianteSeleccionado" :initialData="estudianteSeleccionado" :isEditing="false"
-      @cerrarFormulario="cerrarFormulario" />
   </div>
 </template>
 
@@ -190,6 +190,11 @@ const mostrarFoto = (foto) => {
 
 const cerrarFoto = () => {
   fotoGrande.value = null;
+};
+
+const insercionAutomatica = () => {
+  // Implementa la lógica para la inserción automática
+  console.log('Inserción automática');
 };
 
 onMounted(async () => {

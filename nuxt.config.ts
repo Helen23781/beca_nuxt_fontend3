@@ -8,13 +8,9 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxt/image',
     "@sidebase/nuxt-auth",
-    "@nuxtjs/seo"
+    "@nuxtjs/seo",
+    "@zadigetvoltaire/nuxt-gtm"
   ],
-  // postcss: {
-   // plugins: {
-   //   tailwindcss: {},
-    //  autoprefixer: {},
-   // },
    build: {
     transpile: ['vue-toastification']
   },
