@@ -59,14 +59,18 @@
             </td>
             <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.facultad }}
             </td>
-            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
-              estudiante.cuarto?.torre?.piso?.beca?.nombre_beca }}</td>
-            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
-              estudiante.cuarto?.torre?.piso?.numero_piso }}</td>
-            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
-              estudiante.cuarto?.torre?.nombre_torre }}</td>
-            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
-              estudiante.cuarto?.numero_cuarto }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">
+              {{ estudiante.cuarto?.torre?.piso?.beca?.nombre_beca || 'N/A' }}
+            </td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">
+              {{ estudiante.cuarto?.torre?.piso?.numero_piso || 'N/A' }}
+            </td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">
+              {{ estudiante.cuarto?.torre?.nombre_torre || 'N/A' }}
+            </td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">
+              {{ estudiante.cuarto?.numero_cuarto || 'N/A' }}
+            </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
               <button @click="mostrarEstudiante(estudiante)" class="text-blue-500 hover:underline mr-2">Mostrar</button>
               <button @click="abrirFormulario(estudiante)" class="text-blue-500 hover:underline mr-2">Editar</button>
@@ -78,7 +82,7 @@
     </div>
 
     <Modal :visible="showModal" @close="cerrarFormulario">
-      <EstudianteFormulario :initialData="estudianteSeleccionado" :isEditing="isEditing" :isReadOnly="isReadOnly"
+      <EstudianteFormulario :initialData="estudianteSeleccionado" :isEditing="isEditing" :isShowing="isShowing"
         @estudianteCreado="handleEstudianteCreado" @estudianteActualizado="fetchEstudiantes"
         @cerrarFormulario="cerrarFormulario" />
     </Modal>
@@ -114,7 +118,7 @@ const estudiantes = ref([]);
 const showModal = ref(false);
 const estudianteSeleccionado = ref(null);
 const isEditing = ref(false);
-const isReadOnly = ref(false);
+const isShowing = ref(false);
 const fotoGrande = ref(null);
 
 // Agregar el toast
@@ -127,16 +131,17 @@ const fetchEstudiantes = async () => {
         'Authorization': token.value
       },
     });
-    console.log(estudiantes);
+    console.log('Datos de estudiantes:', estudiantes.value);
   } catch (error) {
     console.error('Error al obtener los estudiantes:', error);
     toast.error('Error al obtener los estudiantes');
   }
 };
 
-const abrirFormulario = (estudiante = null) => {
+const abrirFormulario = (estudiante = null, mostrar = false) => {
   estudianteSeleccionado.value = estudiante;
-  isEditing.value = !!estudiante;
+  isEditing.value = !!estudiante && !mostrar;
+  isShowing.value = mostrar;
   showModal.value = true;
 };
 
@@ -175,7 +180,7 @@ const handleEstudianteCreado = () => {
 const mostrarEstudiante = (estudiante) => {
   estudianteSeleccionado.value = estudiante;
   isEditing.value = false;
-  isReadOnly.value = true;
+  isShowing.value = false;
   showModal.value = true;
 };
 
