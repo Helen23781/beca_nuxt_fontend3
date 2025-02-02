@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="text-3xl font-bold mb-4 text-center">Gestión de Estudiantes</h1>
     <h1 class="text-2xl font-bold mb-4">Lista de Estudiantes</h1>
     <div class="flex justify-end mb-6">
       <button @click="abrirFormulario()"

@@ -8,12 +8,43 @@
         </div>
         <div class="mt-4">
             <h3 class="text-lg font-semibold">Cambiar Contraseña</h3>
-            <div class="mb-2">
-                <input type="password" v-model="newPassword" :class="newPasswordClass" placeholder="Nueva Contraseña" />
+            <div class="mb-2 relative">
+                <input :type="mostrarContrasena ? 'text' : 'password'" v-model="newPassword" :class="newPasswordClass"
+                    placeholder="Nueva Contraseña" />
+                <button type="button" @click="toggleMostrarContrasena"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                    <svg v-if="mostrarContrasena" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.97 10.97 0 0112 20c-7 0-11-8-11-8a21.35 21.35 0 014.06-5.94M1 1l22 22">
+                        </path>
+                    </svg>
+                </button>
             </div>
-            <div class="mb-2">
-                <input type="password" v-model="confirmPassword" :class="confirmPasswordClass"
-                    placeholder="Confirmar Nueva Contraseña" />
+            <div class="mb-2 relative">
+                <input :type="mostrarContrasena ? 'text' : 'password'" v-model="confirmPassword"
+                    :class="confirmPasswordClass" placeholder="Confirmar Nueva Contraseña" />
+                <button type="button" @click="toggleMostrarContrasena"
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                    <svg v-if="mostrarContrasena" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.97 10.97 0 0112 20c-7 0-11-8-11-8a21.35 21.35 0 014.06-5.94M1 1l22 22">
+                        </path>
+                    </svg>
+                </button>
             </div>
             <button @click="actualizarPerfil" class="mt-2 p-2 bg-blue-500 text-white rounded">Actualizar</button>
         </div>
@@ -43,6 +74,12 @@ const passwordFieldErrorClass = 'mt-2 p-2 border border-red-500 rounded w-full';
 
 const newPasswordClass = computed(() => newPassword.value ? passwordFieldClass : passwordFieldErrorClass);
 const confirmPasswordClass = computed(() => confirmPassword.value ? passwordFieldClass : passwordFieldErrorClass);
+
+const mostrarContrasena = ref(false);
+
+const toggleMostrarContrasena = () => {
+    mostrarContrasena.value = !mostrarContrasena.value;
+};
 
 const actualizarPerfil = async () => {
     if (!newPassword.value || !confirmPassword.value) {
