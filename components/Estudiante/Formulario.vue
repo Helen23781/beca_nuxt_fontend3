@@ -47,6 +47,12 @@
                     :disabled="isReadOnly" />
             </div>
             <div>
+                <label for="ci" class="block text-gray-700 font-bold mb-1">CI:</label>
+                <input type="text" id="ci" v-model="ci" required
+                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !ci }]"
+                    :disabled="isReadOnly" />
+            </div>
+            <div>
                 <label for="anioAcademico" class="block text-gray-700 font-bold mb-1">Año Académico:</label>
                 <select id="anioAcademico" v-model="anioAcademico" required
                     :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !anioAcademico }]"
@@ -146,6 +152,7 @@ const props = defineProps({
 const config = useRuntimeConfig();
 const nombreEstudiante = ref(props.initialData?.nombre_estudiante || '');
 const apellidoEstudiante = ref(props.initialData?.apellido_estudiante || '');
+const ci = ref(props.initialData?.ci || '');
 const anioAcademico = ref(props.initialData?.anio_academico || '');
 const edad = ref(props.initialData?.edad || '');
 const carrera = ref(props.initialData?.carrera || '');
@@ -318,6 +325,7 @@ const enviarFormulario = async () => {
     const formData = new FormData();
     formData.append('nombre_estudiante', nombreEstudiante.value);
     formData.append('apellido_estudiante', apellidoEstudiante.value);
+    formData.append('ci', ci.value);
     formData.append('anio_academico', anioAcademico.value);
     formData.append('edad', edad.value);
     formData.append('carrera', carrera.value);
@@ -358,16 +366,18 @@ const enviarFormulario = async () => {
 
     } catch (error) {
         console.error('Error:', error);
-        toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+
+        toast.error(`Error: ${error.response._data.message}`);
     }
 };
 
 // Guardar en localStorage cada vez que los campos cambien
-watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreid, cuartoId, foto], () => {
+watch([nombreEstudiante, apellidoEstudiante, anioAcademico, edad, carrera, facultad, becaId, pisoId, torreid, cuartoId, foto, ci], () => {
     if (!props.isEditing) {
         localStorage.setItem('datosFormularioEstudiante', JSON.stringify({
             nombre_estudiante: nombreEstudiante.value,
             apellido_estudiante: apellidoEstudiante.value,
+            ci: ci.value,
             anio_academico: anioAcademico.value,
             edad: edad.value,
             carrera: carrera.value,
@@ -387,6 +397,7 @@ if (!props.isEditing) {
     if (storedData) {
         nombreEstudiante.value = storedData.nombre_estudiante || '';
         apellidoEstudiante.value = storedData.apellido_estudiante || '';
+        ci.value = storedData.ci || '';
         anioAcademico.value = storedData.anio_academico || '';
         edad.value = storedData.edad || '';
         carrera.value = storedData.carrera || '';
