@@ -46,10 +46,7 @@
         <tbody>
           <tr v-for="estudiante in estudiantes" :key="estudiante.id" class="hover:bg-gray-50">
             <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">
-              <NuxtImg
-                :src="estudiante.foto ? `${config.public.backend_url}/estudiantes/foto/${estudiante.foto}` : '/images/avatar.jpg'"
-                alt="Foto del estudiante" class="w-10 h-10 rounded-full object-cover cursor-pointer"
-                @click="mostrarFoto(estudiante.foto)" @error="event => event.target.src = '/images/avatar.jpg'" />
+              <EstudianteFoto :fotoUrl="estudiante.foto" />
             </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.nombre_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.apellido_estudiante }}</td>

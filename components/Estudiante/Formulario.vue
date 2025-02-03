@@ -2,7 +2,8 @@
     <form @submit.prevent="validarYEnviar" class="max-w-lg mx-auto bg-white p-4 rounded-lg shadow-md max-h-screengap-4">
         <div class="flex justify-center mb-4">
             <NuxtImg :src="fotoUrl" alt="Vista previa de la foto"
-                class="rounded-full h-24 w-24 object-cover cursor-pointer" @click="mostrarFotoGrande" />
+                class="rounded-full h-24 w-24 object-cover cursor-pointer" @click="mostrarFotoGrande"
+                @error="handleImageError" />
         </div>
 
         <!-- Modal para mostrar la foto en grande -->
@@ -211,11 +212,15 @@ const cuartosFiltrados = computed(() => {
     return cuartos.value.filter(cuarto => cuarto.torreid === torreid.value);
 });
 
-// Computed para obtener la URL de la foto desde el backend
+// Computed para obtener la URL de la foto desde el backend o Supabase
 const fotoUrl = computed(() => {
+    if (foto.value && foto.value.includes('supabase.co')) {
+        // Si la URL ya es de Supabase, la usamos directamente
+        return foto.value;
+    }
     return foto.value && !foto.value.startsWith('data:')
         ? `${config.public.backend_url}/estudiantes/foto/${foto.value}`
-        : '/images/avatar.jpg';
+        : foto.value || '/images/avatar.jpg';
 });
 
 // Función para cargar las becas
@@ -466,6 +471,12 @@ const mostrarFotoGrande = () => {
 
 const cerrarFotoGrande = () => {
     fotoGrande.value = null;
+};
+
+const handleImageError = (event) => {
+    if (event.target.src !== '/images/avatar.jpg') {
+        event.target.src = '/images/avatar.jpg';
+    }
 };
 
 </script>
