@@ -111,7 +111,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: "https://localhost",
+    url: process.env.FRONTEND_URL,
     name: "Residencia Universitaria UNISS",
     description:
       "Gestionamos todos los datos de los estudiantes y profesores internos, incluyendo las becas, pisos, torres y cuartos a los que pertenecen.",

@@ -170,7 +170,7 @@ const deleteEstudiante = async (id) => {
 
 const cerrarFormulario = () => {
   showModal.value = false;
-  localStorage.removeItem('datosFormularioEstudiante');
+
 };
 
 const handleEstudianteCreado = () => {
@@ -195,10 +195,7 @@ const cerrarFoto = () => {
   fotoGrande.value = null;
 };
 
-const insercionAutomatica = () => {
-  // Implementa la lógica para la inserción automática
-  console.log('Inserción automática');
-};
+
 
 onMounted(async () => {
   await fetchEstudiantes();
