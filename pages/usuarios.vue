@@ -88,14 +88,14 @@ const abrirFormulario = (usuario = null) => {
 
 const agregarUsuario = (nuevoUsuario) => {
     usuarios.value.push(nuevoUsuario);
-    toast.success('Usuario creado exitosamente');
+
 };
 
 const actualizarUsuario = (usuarioActualizado) => {
     const index = usuarios.value.findIndex(usuario => usuario.id === usuarioActualizado.id);
     if (index !== -1) {
         usuarios.value[index] = usuarioActualizado;
-        toast.success('Usuario actualizado exitosamente');
+
     }
 };
 

@@ -52,8 +52,10 @@ const emit = defineEmits(['usuarioCreado', 'usuarioActualizado', 'cerrarFormular
 
 const config = useRuntimeConfig();
 const nombreUsuario = ref(props.initialData?.nombre_usuario || '');
-const contrasena = ref(props.initialData?.contrasena || '');
+const contrasena = ref('');
 const role = ref(props.initialData?.role || '');
+
+console.log(props.initialData?.contrasena)
 
 const cancelarFormulario = () => {
     emit('cerrarFormulario');
@@ -74,7 +76,7 @@ const enviarFormulario = async () => {
             },
             body: JSON.stringify({
                 nombre_usuario: nombreUsuario.value,
-                contrasena: contrasena.value,
+                contrasena: (props.isEditing) ? undefined : contrasena.value,
                 role: role.value
             })
         });
