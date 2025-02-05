@@ -1,135 +1,158 @@
 <template>
-    <form @submit.prevent="validarYEnviar" class="max-w-lg mx-auto bg-white p-4 rounded-lg shadow-md max-h-screengap-4">
-        <div class="flex justify-center mb-4">
-            <NuxtImg :src="fotoUrl" alt="Vista previa de la foto"
-                class="rounded-full h-24 w-24 object-cover cursor-pointer" @click="mostrarFotoGrande"
-                @error="handleImageError" />
-        </div>
+    <div class="max-w-xl mx-auto bg-white p-4 rounded-lg shadow-md max-h-screen overflow-y-auto">
+        <form @submit.prevent="validarYEnviar"
+            class="max-w-xl mx-auto bg-white p-4 rounded-lg shadow-md max-h-screengap-4">
+            <div class="flex justify-center mb-4">
+                <NuxtImg :src="fotoUrl" alt="Vista previa de la foto"
+                    class="rounded-full h-24 w-24 object-cover cursor-pointer" @click="mostrarFotoGrande" />
+            </div>
 
-        <!-- Modal para mostrar la foto en grande -->
-        <div v-if="fotoGrande" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-            @click="cerrarFotoGrande">
-            <img :src="fotoGrande" alt="Foto del estudiante" class="max-w-full max-h-full" />
-        </div>
+            <!-- Modal para mostrar la foto en grande -->
+            <div v-if="fotoGrande" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                @click="cerrarFotoGrande">
+                <img :src="fotoGrande" alt="Foto del estudiante" class="max-w-full max-h-full" />
+            </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="facultad" class="block text-gray-700 font-bold mb-1">Facultad:</label>
-                <select id="facultad" v-model="facultad" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !facultad }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione una facultad</option>
-                    <option value="Ciencias Tecnicas y Economicas">Ciencias Técnicas y Económicas</option>
-                    <option value="Ciencias Pedagogicas">Ciencias Pedagógicas</option>
-                    <option value="Humanidades">Humanidades</option>
-                    <option value="Cultura Fisica">Cultura Física</option>
-                    <option value="Ciencias Agropecuarias">Ciencias Agropecuarias</option>
-                </select>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="facultad" class="block text-gray-700 font-bold mb-1">Facultad:</label>
+                    <select id="facultad" v-model="facultad" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !facultad }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione una facultad</option>
+                        <option value="Ciencias Tecnicas y Economicas">Ciencias Técnicas y Económicas</option>
+                        <option value="Ciencias Pedagogicas">Ciencias Pedagógicas</option>
+                        <option value="Humanidades">Humanidades</option>
+                        <option value="Cultura Fisica">Cultura Física</option>
+                        <option value="Ciencias Agropecuarias">Ciencias Agropecuarias</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="carrera" class="block text-gray-700 font-bold mb-1">Carrera:</label>
+                    <select id="carrera" v-model="carrera" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !carrera }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione una carrera</option>
+                        <option v-for="c in carrerasFiltradas" :key="c" :value="c">{{ c }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="nombreEstudiante" class="block text-gray-700 font-bold mb-1">Nombre:</label>
+                    <input type="text" id="nombreEstudiante" v-model="nombreEstudiante" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !nombreEstudiante }]"
+                        :disabled="isReadOnly" />
+                </div>
+                <div>
+                    <label for="apellidoEstudiante" class="block text-gray-700 font-bold mb-1">Apellido:</label>
+                    <input type="text" id="apellidoEstudiante" v-model="apellidoEstudiante" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !apellidoEstudiante }]"
+                        :disabled="isReadOnly" />
+                </div>
+                <div>
+                    <label for="ci" class="block text-gray-700 font-bold mb-1 mr-4">CI:</label>
+
+                    <div class="flex items-center">
+                        <input type="text" id="ci" v-model="ci" @input="determinarSexo" required maxlength="11"
+                            class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            :disabled="isReadOnly" />
+
+                    </div>
+                </div>
+                <div>
+
+                    <label class="block text-gray-700 font-bold mb-1">Género:</label>
+                    <div class="ml-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" :checked="sexo === 'Femenino'" disabled
+                                class="form-radio text-pink-600" />
+                            <span class="ml-2 text-gray-700">Femenino</span>
+                        </label>
+                        <label class="inline-flex items-center ml-4">
+                            <input type="radio" :checked="sexo === 'Masculino'" disabled
+                                class="form-radio text-blue-600" />
+                            <span class="ml-2 text-gray-700">Masculino</span>
+                        </label>
+                    </div>
+
+                </div>
+                <div>
+                    <label for="edad" class="block text-gray-700 font-bold mb-1">Edad:</label>
+                    <input type="number" id="edad" v-model="edad" required min="1"
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !edad }]"
+                        :disabled="isReadOnly" />
+                </div>
+                <div>
+                    <label for="anioAcademico" class="block text-gray-700 font-bold mb-1">Año Académico:</label>
+                    <select id="anioAcademico" v-model="anioAcademico" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !anioAcademico }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione un año</option>
+                        <option v-for="anio in [1, 2, 3, 4, 5, 6]" :key="anio" :value="anio">{{ anio }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="becaId" class="block text-gray-700 font-bold mb-1">Beca:</label>
+                    <select id="becaId" v-model="becaId" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !becaId }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione una beca</option>
+                        <option v-for="beca in becas" :key="beca.id" :value="beca.id">
+                            {{ beca.nombre_beca }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label for="pisoId" class="block text-gray-700 font-bold mb-1">Piso:</label>
+                    <select id="pisoId" v-model="pisoId" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !pisoId }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione un piso</option>
+                        <option v-for="piso in pisosFiltrados" :key="piso.id" :value="piso.id">
+                            {{ piso.numero_piso }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label for="torreid" class="block text-gray-700 font-bold mb-1">Torre:</label>
+                    <select id="torreid" v-model="torreid" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !torreid }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione una torre</option>
+                        <option v-for="torre in torresFiltradas" :key="torre.id" :value="torre.id">
+                            {{ torre.nombre_torre }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label for="cuartoId" class="block text-gray-700 font-bold mb-1">Cuarto:</label>
+                    <select id="cuartoId" v-model="cuartoId" required
+                        :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !cuartoId }]"
+                        :disabled="isReadOnly">
+                        <option value="">Seleccione un cuarto</option>
+                        <option v-for="cuarto in cuartosFiltrados" :key="cuarto.id" :value="cuarto.id">
+                            {{ cuarto.numero_cuarto }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label for="foto" class="block text-gray-700 font-bold mb-1">Foto:</label>
+                    <input type="file" id="foto" @change="handleFileChange"
+                        class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        :disabled="isReadOnly" />
+                </div>
             </div>
-            <div>
-                <label for="carrera" class="block text-gray-700 font-bold mb-1">Carrera:</label>
-                <select id="carrera" v-model="carrera" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !carrera }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione una carrera</option>
-                    <option v-for="c in carrerasFiltradas" :key="c" :value="c">{{ c }}</option>
-                </select>
+            <div class="flex justify-end space-x-2 mt-4">
+                <button type="button" @click="cancelarFormulario"
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Cancelar
+                </button>
+                <button type="submit" v-if="!isShowing"
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    {{ isEditing ? 'Actualizar Estudiante' : 'Crear Estudiante' }}
+                </button>
             </div>
-            <div>
-                <label for="nombreEstudiante" class="block text-gray-700 font-bold mb-1">Nombre:</label>
-                <input type="text" id="nombreEstudiante" v-model="nombreEstudiante" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !nombreEstudiante }]"
-                    :disabled="isReadOnly" />
-            </div>
-            <div>
-                <label for="apellidoEstudiante" class="block text-gray-700 font-bold mb-1">Apellido:</label>
-                <input type="text" id="apellidoEstudiante" v-model="apellidoEstudiante" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !apellidoEstudiante }]"
-                    :disabled="isReadOnly" />
-            </div>
-            <div>
-                <label for="ci" class="block text-gray-700 font-bold mb-1">CI:</label>
-                <input type="text" id="ci" v-model="ci" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !ci }]"
-                    :disabled="isReadOnly" />
-            </div>
-            <div>
-                <label for="anioAcademico" class="block text-gray-700 font-bold mb-1">Año Académico:</label>
-                <select id="anioAcademico" v-model="anioAcademico" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !anioAcademico }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione un año</option>
-                    <option v-for="anio in [1, 2, 3, 4, 5, 6]" :key="anio" :value="anio">{{ anio }}</option>
-                </select>
-            </div>
-            <div>
-                <label for="edad" class="block text-gray-700 font-bold mb-1">Edad:</label>
-                <input type="number" id="edad" v-model="edad" required min="1"
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !edad }]"
-                    :disabled="isReadOnly" />
-            </div>
-            <div>
-                <label for="becaId" class="block text-gray-700 font-bold mb-1">Beca:</label>
-                <select id="becaId" v-model="becaId" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !becaId }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione una beca</option>
-                    <option v-for="beca in becas" :key="beca.id" :value="beca.id">
-                        {{ beca.nombre_beca }}
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label for="pisoId" class="block text-gray-700 font-bold mb-1">Piso:</label>
-                <select id="pisoId" v-model="pisoId" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !pisoId }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione un piso</option>
-                    <option v-for="piso in pisosFiltrados" :key="piso.id" :value="piso.id">
-                        {{ piso.numero_piso }}
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label for="torreid" class="block text-gray-700 font-bold mb-1">Torre:</label>
-                <select id="torreid" v-model="torreid" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !torreid }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione una torre</option>
-                    <option v-for="torre in torresFiltradas" :key="torre.id" :value="torre.id">
-                        {{ torre.nombre_torre }}
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label for="cuartoId" class="block text-gray-700 font-bold mb-1">Cuarto:</label>
-                <select id="cuartoId" v-model="cuartoId" required
-                    :class="['shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline', { 'border-red-500': !cuartoId }]"
-                    :disabled="isReadOnly">
-                    <option value="">Seleccione un cuarto</option>
-                    <option v-for="cuarto in cuartosFiltrados" :key="cuarto.id" :value="cuarto.id">
-                        {{ cuarto.numero_cuarto }}
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label for="foto" class="block text-gray-700 font-bold mb-1">Foto:</label>
-                <input type="file" id="foto" @change="handleFileChange"
-                    class="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    :disabled="isReadOnly" />
-            </div>
-        </div>
-        <div class="flex justify-end space-x-2 mt-4">
-            <button type="button" @click="cancelarFormulario"
-                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Cancelar
-            </button>
-            <button type="submit"
-                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {{ isEditing ? 'Actualizar Estudiante' : 'Crear Estudiante' }}
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </template>
 
 <script setup>
@@ -147,8 +170,10 @@ const props = defineProps({
     initialData: Object,
     isEditing: Boolean,
     isShowing: Boolean,
-    isReadOnly: Boolean
+
 });
+
+const isReadOnly = ref(props.isShowing)
 
 const config = useRuntimeConfig();
 const nombreEstudiante = ref(props.initialData?.nombre_estudiante || '');
@@ -169,6 +194,7 @@ const torres = ref([]);
 const cuartos = ref([]);
 
 const fotoGrande = ref(null);
+const sexo = ref('');
 
 // Opciones de carreras por facultad
 const opcionesCarreras = {
@@ -295,8 +321,31 @@ const handleFileChange = (event) => {
     }
 };
 
-// Función para validar y enviar el formulario
+// Función para determinar el sexo basado en el último dígito del CI
+const determinarSexo = () => {
+    if (ci.value.length === 11) {
+        const ultimoDigito = parseInt(ci.value[ci.value.length - 1], 10);
+        sexo.value = ultimoDigito % 2 === 0 ? 'Femenino' : 'Masculino';
+    } else {
+        sexo.value = '';
+    }
+};
+
+// Validaciones
+const validarNombreApellido = (nombre) => /^[A-Z][a-zA-Z\s]*$/.test(nombre);
+const validarAnioAcademico = (anio) => /^[1-5]$/.test(anio);
+const validarEdad = (edad) => /^[1-9][0-9]?$/.test(edad);
+
+// Actualización de la validación para el CI
+const validarCI = (ci) => {
+    return /^\d{11}$/.test(ci); // Verifica que tenga 11 dígitos
+};
+
 const validarYEnviar = () => {
+    if (!ci.value) {
+        toast.error('Seleccione un carnet de identidad primero.');
+        return;
+    }
     if (!validarNombreApellido(nombreEstudiante.value)) {
         toast.error('El nombre debe contener solo letras y comenzar con mayúscula.');
         return;
@@ -313,13 +362,12 @@ const validarYEnviar = () => {
         toast.error('La edad debe ser un número entero menor que 100.');
         return;
     }
+    if (!validarCI(ci.value)) {
+        toast.error('El CI debe tener 11 dígitos.');
+        return;
+    }
     enviarFormulario();
 };
-
-// Validaciones
-const validarNombreApellido = (nombre) => /^[A-Z][a-zA-Z\s]*$/.test(nombre);
-const validarAnioAcademico = (anio) => /^[1-5]$/.test(anio);
-const validarEdad = (edad) => /^[1-9][0-9]?$/.test(edad);
 
 const enviarFormulario = async () => {
     const url = props.isEditing
@@ -425,6 +473,7 @@ onMounted(async () => {
     await cargarPisos();
     await cargarTorres();
     await cargarCuartos();
+    determinarSexo()
 
     if (props.isEditing || props.isShowing) {
         becaId.value = props.initialData?.cuarto?.torre?.piso?.beca?.id || '';
