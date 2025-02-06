@@ -20,19 +20,28 @@
       <table class="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Foto</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Foto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Apellido</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">CI</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Año Académico</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Edad</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Carrera</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Facultad</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Beca</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Número de Piso</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Nombre de Torre</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Cuarto</th>
-            <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Género</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">CI
+            </th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Edad</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Año
+              Académico</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Carrera</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Facultad</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Nombre de Beca</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Número de Piso</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Nombre de Torre</th>
+            <th class="hidden md:table-cell px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">
+              Número de Cuarto</th>
             <th class="px-4 py-2 border-b-2 border-gray-200 bg-blue-200 text-black text-center">Acciones</th>
           </tr>
         </thead>
@@ -43,20 +52,22 @@
             </td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.nombre_estudiante }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.apellido_estudiante }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.ci }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.anio_academico }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.edad }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.carrera }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.facultad }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{
-              estudiante.cuarto?.torre?.piso?.beca?.nombre_beca || 'N/A' }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.piso?.numero_piso ||
-              'N/A' }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.torre?.nombre_torre ||
-              'N/A' }}</td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.cuarto?.numero_cuarto || 'N/A' }}
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.ci }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.edad }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.anio_academico
+              }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.carrera }}
             </td>
-            <td class="px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.genero }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{ estudiante.facultad }}
+            </td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              estudiante.cuarto?.torre?.piso?.beca?.nombre_beca || 'N/A' }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              estudiante.cuarto?.torre?.piso?.numero_piso || 'N/A' }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              estudiante.cuarto?.torre?.nombre_torre || 'N/A' }}</td>
+            <td class="hidden md:table-cell px-4 py-2 border-b border-gray-200 text-center">{{
+              estudiante.cuarto?.numero_cuarto || 'N/A' }}</td>
             <td class="px-4 py-2 border-b border-gray-200 text-center">
               <button @click="mostrarEstudiante(estudiante)" class="text-blue-500 hover:underline mr-2">Mostrar</button>
               <button @click="abrirFormulario(estudiante)" class="text-blue-500 hover:underline mr-2">Editar</button>
