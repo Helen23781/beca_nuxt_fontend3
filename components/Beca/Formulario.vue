@@ -20,9 +20,9 @@
         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         Cancelar
       </button>
-      <button type="submit"
+      <button type="submit" :disabled="cargando"
         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        {{ isEditing ? 'Actualizar Beca' : 'Crear Beca' }}
+        {{ cargando ? 'Cargando...' : (isEditing ? 'Actualizar Beca' : 'Crear Beca') }}
       </button>
     </div>
   </form>
@@ -50,6 +50,7 @@ const jefeBeca = ref(props.initialData?.jefe_beca || '');
 const nombreError = ref(false);
 const jefeError = ref(false);
 const jefeFormatoError = ref(false);
+const cargando = ref(false);
 
 const validarMayuscula = (texto) => {
   return texto.charAt(0) === texto.charAt(0).toUpperCase();
@@ -84,6 +85,7 @@ const cancelarFormulario = () => {
 };
 
 const enviarFormulario = async () => {
+  cargando.value = true;
   const url = props.isEditing
     ? `${config.public.backend_url}/becas/update/${props.initialData.id}`
     : `${config.public.backend_url}/becas/create`;
@@ -95,7 +97,6 @@ const enviarFormulario = async () => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token.value
-
       },
       body: JSON.stringify({
         nombre_beca: nombreBeca.value,
@@ -105,7 +106,6 @@ const enviarFormulario = async () => {
 
     const data = await response;
 
-    // Guardar en localStorage solo si no está editando
     if (!props.isEditing) {
       localStorage.setItem('becaData', JSON.stringify({
         nombre_beca: nombreBeca.value,
@@ -113,31 +113,26 @@ const enviarFormulario = async () => {
       }));
     }
 
-    // Primero emitimos los eventos de actualización
     if (props.isEditing) {
       emit('becaActualizada', data);
     } else {
       emit('becaCreada', data);
     }
 
-    // Cerramos el formulario
     emit('cerrarFormulario');
+    toast.success(props.isEditing ? 'Beca actualizada exitosamente' : 'Beca creada exitosamente');
 
-    // Mostramos el mensaje de éxito después de cerrar
-    toast.success(props.isEditing ? 'Beca actualizada exitosamente' : 'Beca creada exitosamente')
-
-
-    // Limpiar localStorage después de crear
     if (!props.isEditing) {
       localStorage.removeItem('becaData');
     }
 
   } catch (error) {
     console.error('Error fetching books:', error);
-    // Mostrar mensaje de error
     const errorMessage = error.response?._data?.message || 'Ha ocurrido un error inesperado';
     const errorCode = error.response?.status || 500;
     toast.error(`Error ${errorCode}: ${errorMessage}`);
+  } finally {
+    cargando.value = false;
   }
 };
 

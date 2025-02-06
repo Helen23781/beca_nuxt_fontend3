@@ -13,9 +13,9 @@
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter 6-digit code" />
                     </div>
-                    <button @click="validateCode"
+                    <button @click="validateCode" :disabled="cargando"
                         class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        Verify Code
+                        {{ cargando ? 'Cargando...' : 'Verify Code' }}
                     </button>
                 </div>
 
@@ -38,9 +38,9 @@
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter 6-digit code" />
                     </div>
-                    <button @click="enableTwoFactor"
+                    <button @click="enableTwoFactor" :disabled="cargando"
                         class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                        Enable 2FA
+                        {{ cargando ? 'Cargando...' : 'Enable 2FA' }}
                     </button>
                 </div>
 
@@ -72,6 +72,7 @@ const message = ref('')
 const isSuccess = ref(false)
 const qrCodeUrl = ref('')
 const secretKey = ref('')
+const cargando = ref(false)
 
 const config = useRuntimeConfig();
 
@@ -90,6 +91,7 @@ const messageClass = computed(() => {
 })
 
 const validateCode = async () => {
+    cargando.value = true
     try {
         const response = await $fetch(`${config.public.backend_url}/auth/2fa/validate`, {
             method: 'POST',
@@ -106,11 +108,14 @@ const validateCode = async () => {
     } catch (error) {
         isSuccess.value = false
         toast.error('Código de verificación inválido. Inténtalo de nuevo.')
+    } finally {
+        cargando.value = false
     }
     verificationCode.value = ''
 }
 
 const enableTwoFactor = async () => {
+    cargando.value = true
     try {
         const response = await $fetch(`${config.public.backend_url}/auth/2fa/verify`, {
             method: 'POST',
@@ -128,6 +133,8 @@ const enableTwoFactor = async () => {
     } catch (error) {
         isSuccess.value = false
         toast.error('Código de configuración inválido. Inténtalo de nuevo.')
+    } finally {
+        cargando.value = false
     }
     setupCode.value = ''
 }

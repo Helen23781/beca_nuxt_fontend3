@@ -26,9 +26,9 @@
             </svg>
           </button>
         </div>
-        <button type="submit"
+        <button type="submit" :disabled="cargando"
           class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700">
-          Iniciar sesión
+          {{ cargando ? 'Cargando...' : 'Iniciar sesión' }}
         </button>
       </form>
     </div>
@@ -44,6 +44,7 @@ const { signIn } = useAuth()
 const nombre_usuario = ref("");
 const contrasena = ref("");
 const mostrarContrasena = ref(false);
+const cargando = ref(false);
 
 const toast = useToast();
 
@@ -66,13 +67,15 @@ useSeoMeta({
 });
 
 const handleSignIn = async () => {
+  cargando.value = true;
   try {
     await signIn({ nombre_usuario: nombre_usuario.value, contrasena: contrasena.value },
       { callbackUrl: '/confirm2FA', redirect: true });
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
-    // Mostrar mensaje de error con toast
     toast.error("Credenciales inválidas. Por favor, inténtalo de nuevo.");
+  } finally {
+    cargando.value = false;
   }
 };
 

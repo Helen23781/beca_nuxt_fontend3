@@ -35,9 +35,9 @@
         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         Cancelar
       </button>
-      <button type="submit"
+      <button type="submit" :disabled="cargando"
         class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        {{ isEditing ? 'Actualizar Piso' : 'Crear Piso' }}
+        {{ cargando ? 'Cargando...' : (isEditing ? 'Actualizar Piso' : 'Crear Piso') }}
       </button>
     </div>
   </form>
@@ -65,6 +65,7 @@ const becas = ref([]);
 const numeroError = ref(false);
 const jefeError = ref(false);
 const jefeFormatoError = ref(false);
+const cargando = ref(false);
 
 // Función para cargar las becas
 const cargarBecas = async () => {
@@ -105,6 +106,7 @@ const validarYEnviar = () => {
 };
 
 const enviarFormulario = async () => {
+  cargando.value = true;
   const url = props.isEditing
     ? `${config.public.backend_url}/pisos/update/${props.initialData.id}`
     : `${config.public.backend_url}/pisos/create`;
@@ -153,6 +155,8 @@ const enviarFormulario = async () => {
   } catch (error) {
     console.error('Error:', error);
     toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+  } finally {
+    cargando.value = false;
   }
 };
 

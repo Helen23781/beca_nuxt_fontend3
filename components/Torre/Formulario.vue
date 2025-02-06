@@ -39,10 +39,9 @@
       </select>
     </div>
     <div class="flex justify-end space-x-2" v-if="!isShowing">
-      <button type="submit"
-        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        :disabled="props.isShowing">
-        {{ isEditing ? 'Actualizar Torre' : 'Crear Torre' }}
+      <button type="submit" :disabled="cargando"
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        {{ cargando ? 'Cargando...' : (isEditing ? 'Actualizar Torre' : 'Crear Torre') }}
       </button>
     </div>
   </form>
@@ -73,6 +72,7 @@ const pisos = ref([]);
 const nombreError = ref(false);
 const jefeError = ref(false);
 const jefeFormatoError = ref(false);
+const cargando = ref(false);
 
 // Computed para filtrar los pisos según la beca seleccionada
 const pisosFiltrados = computed(() => {
@@ -158,6 +158,7 @@ const cancelarFormulario = () => {
 };
 
 const enviarFormulario = async () => {
+  cargando.value = true;
   const url = props.isEditing
     ? `${config.public.backend_url}/torres/update/${props.initialData.id}`
     : `${config.public.backend_url}/torres/create`;
@@ -187,7 +188,7 @@ const enviarFormulario = async () => {
       toast.success('Torre actualizada exitosamente');
     } else {
       emit('torreCreada', data);
-      localStorage.removeItem('torreData'); // Limpiar localStorage después de la creación
+      localStorage.removeItem('torreData');
       toast.success('Torre creada exitosamente');
     }
 
@@ -196,6 +197,8 @@ const enviarFormulario = async () => {
   } catch (error) {
     console.error('Error:', error);
     toast.error(`Error: ${error.message}\nPor favor, verifique los datos e intente nuevamente.`);
+  } finally {
+    cargando.value = false;
   }
 };
 

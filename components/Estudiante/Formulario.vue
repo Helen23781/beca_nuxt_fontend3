@@ -146,9 +146,9 @@
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Cancelar
                 </button>
-                <button type="submit" v-if="!isShowing"
+                <button type="submit" v-if="!isShowing" :disabled="cargando"
                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    {{ isEditing ? 'Actualizar Estudiante' : 'Crear Estudiante' }}
+                    {{ cargando ? 'Cargando...' : (isEditing ? 'Actualizar Estudiante' : 'Crear Estudiante') }}
                 </button>
             </div>
         </form>
@@ -195,6 +195,8 @@ const cuartos = ref([]);
 
 const fotoGrande = ref(null);
 const sexo = ref('');
+
+const cargando = ref(false);
 
 // Opciones de carreras por facultad
 const opcionesCarreras = {
@@ -370,6 +372,7 @@ const validarYEnviar = () => {
 };
 
 const enviarFormulario = async () => {
+    cargando.value = true; // Inicia el estado de cargando
     const url = props.isEditing
         ? `${config.public.backend_url}/estudiantes/update/${props.initialData.id}`
         : `${config.public.backend_url}/estudiantes/create`;
@@ -419,8 +422,9 @@ const enviarFormulario = async () => {
 
     } catch (error) {
         console.error('Error:', error);
-
         toast.error(`Error: ${error.response._data.message}`);
+    } finally {
+        cargando.value = false; // Finaliza el estado de cargando
     }
 };
 

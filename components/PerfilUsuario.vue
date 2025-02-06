@@ -46,7 +46,9 @@
                     </svg>
                 </button>
             </div>
-            <button @click="actualizarPerfil" class="mt-2 p-2 bg-blue-500 text-white rounded">Actualizar</button>
+            <button @click="actualizarPerfil" :disabled="cargando" class="mt-2 p-2 bg-blue-500 text-white rounded">
+                {{ cargando ? 'Cargando...' : 'Actualizar' }}
+            </button>
         </div>
     </div>
 </template>
@@ -81,6 +83,8 @@ const toggleMostrarContrasena = () => {
     mostrarContrasena.value = !mostrarContrasena.value;
 };
 
+const cargando = ref(false);
+
 const actualizarPerfil = async () => {
     if (!newPassword.value || !confirmPassword.value) {
         toast.error('Llene todos los campos');
@@ -92,6 +96,7 @@ const actualizarPerfil = async () => {
         return;
     }
 
+    cargando.value = true;
     const updateData = {};
     if (userData.value.nombre) {
         updateData.nombre_usuario = userData.value.nombre;
@@ -113,6 +118,8 @@ const actualizarPerfil = async () => {
     } catch (error) {
         console.error('Error al actualizar el perfil:', error);
         toast.error('Error al actualizar el perfil');
+    } finally {
+        cargando.value = false;
     }
 };
 </script>
