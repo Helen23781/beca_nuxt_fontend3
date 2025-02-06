@@ -73,18 +73,13 @@
         @cerrarFormulario="cerrarFormulario" />
     </Modal>
 
-    <!-- Modal para mostrar la foto en grande -->
-    <div v-if="fotoGrande" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-      @click="cerrarFoto">
-      <img :src="fotoGrande" alt="Foto del estudiante" class="max-w-full max-h-full" />
-    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 
-import Modal from '../components/Modal.vue';
 import { useToast } from 'vue-toastification';
 
 // Configuración de SEO
@@ -180,15 +175,7 @@ const mostrarEstudiante = (estudiante) => {
   showModal.value = true;
 };
 
-const mostrarFoto = (foto) => {
-  if (foto) {
-    fotoGrande.value = `${config.public.backend_url}/estudiantes/foto/${foto}`;
-  }
-};
 
-const cerrarFoto = () => {
-  fotoGrande.value = null;
-};
 
 
 

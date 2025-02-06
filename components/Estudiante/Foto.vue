@@ -1,6 +1,8 @@
 <template>
     <NuxtImg :src="foto" alt="Foto del estudiante" class="w-10 h-10 rounded-full object-cover cursor-pointer"
-        @click="mostrarFoto(estudiante.foto)" @error="handleImageError" />
+        @error="handleImageError" />
+
+
 </template>
 
 <script setup>
@@ -28,5 +30,7 @@ onMounted(() => {
         foto.value = fotoUrl ? `${config.public.backend_url}/estudiantes/foto/${fotoUrl}` : '/images/avatar.jpg';
     }
 })
+
+
 
 </script>
